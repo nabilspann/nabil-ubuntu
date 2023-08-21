@@ -3,7 +3,7 @@ import Desktop from '@/pages/Desktop';
 
 export default function Home() {
   return (
-    <main className="overscroll-none">
+    <main>
       <Desktop />
     </main>
   );
