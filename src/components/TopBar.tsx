@@ -1,4 +1,5 @@
-import DisplayTime from "./DisplayTime";
+// import DisplayTime from "./DisplayTime";
+import CalendarTime from "./CalendarTime";
 import Image from "next/image";
 import networkWired from "../../public/svgs/network-wired.svg";
 import power from "../../public/svgs/power.svg";
@@ -24,11 +25,11 @@ const TopBar = () => {
       <div className="w-full h-10 bg-zinc-800 flex flex-wrap flex-row items-center">
         <div className="text-left w-1/3 px-5">Activities</div>
         <div className="text-center w-1/3">
-          <DisplayTime />
+          <CalendarTime />
         </div>
         <div className="text-right w-1/3 px-5">
           <div className="flex flex-row float-right w-fit px-2.5">
-            {icons.map((eachIcon, index) => (
+            {icons.map((eachIcon) => (
               <Image
                 className="mx-1.5"
                 key={eachIcon.alt}

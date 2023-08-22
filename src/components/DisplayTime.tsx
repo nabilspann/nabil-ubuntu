@@ -15,9 +15,6 @@ const DisplayTime = () => {
   })} ${currentDate.getDate()}`;
 
   const displayTime = `${currentDate.getHours()}:${('0' + currentDate.getMinutes()).slice(-2)}`;
-  // const displayTime = `${currentDate.toLocaleString("en-US", {
-  //   month: "short",
-  // })} ${currentDate.getDate()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 
   return (
     <>

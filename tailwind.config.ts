@@ -17,6 +17,7 @@ const config: Config = {
       colors: {
         "ubuntu-dark-1": "#1d1d1d",
         "ubuntu-gray-1": "#464646",
+        "ubuntu-gray-2": "#898989",
       },
     },
   },

@@ -1,0 +1,24 @@
+.custom .react-calendar__navigation{
+    display: flex;
+    padding: 5px 4.5%;
+}
+.custom .react-calendar__tile{
+    width: 9px;
+    height: 45px;
+}
+.custom .react-calendar__month-view__days abbr{
+    font-size: 12px;
+}
+
+.custom .react-calendar__month-view__weekdays abbr{
+    font-size: 13px;
+    @apply text-zinc-500 no-underline;
+}
+
+.custom .react-calendar__navigation .react-calendar__navigation__label__labelText {
+    font-size: 17px;
+}
+
+.custom .react-calendar__year-view, .react-calendar__decade-view{
+    width: 300px;
+}
