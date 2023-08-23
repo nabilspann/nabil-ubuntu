@@ -1,4 +1,4 @@
-import TopBar from "@/components/TopBar";
+import TopBar from "@/components/top-bar/TopBar";
 import TaskBar from "@/components/TaskBar";
 
 const Desktop = () => {

@@ -1,11 +1,7 @@
 import * as React from "react";
+import { SVGProps } from "@/interfaces";
 
-interface Props {
-    size: number;
-    color?: string;
-}
-
-export const ChevronRight = ({color = "currentColor", size}: Props) => (
+export const ChevronRight = ({color = "currentColor", size}: SVGProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -23,7 +19,7 @@ export const ChevronRight = ({color = "currentColor", size}: Props) => (
   </svg>
 );
 
-export const ChevronLeft = ({ color = "currentColor", size }: Props) => (
+export const ChevronLeft = ({ color = "currentColor", size }: SVGProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"

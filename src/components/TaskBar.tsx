@@ -1,7 +1,7 @@
 import Image from "next/image";
 import bentoMenu from "../../public/svgs/bento-menu.svg";
 import documentViewer from "../../public/images/document-viewer.png";
-import TaskIconWrapper from "./TaskIconWrapper";
+import TaskIconWrapper from "./top-bar/TaskIconWrapper";
 
 const TaskBar = () => {
     return (
