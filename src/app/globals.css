@@ -26,3 +26,38 @@ body {
     rgb(var(--background-start-rgb));
   overscroll-behavior: none;
 }
+
+.drop-down-expand-enter {
+  transition: max-height 0.2s ease-in;
+  @apply max-h-0 overflow-hidden;
+}
+.drop-down-expand-enter-active {
+  @apply h-auto max-h-28;
+}
+.drop-down-expand-exit {
+  transition: max-height 0.2s ease-in;
+  @apply max-h-28;
+}
+.drop-down-expand-exit-active {
+  @apply max-h-0 overflow-hidden;
+}
+
+.volume-slider {
+  -webkit-appearance: none;
+  height: 4px;
+  @apply bg-gradient-to-r from-ubuntu-blue-1 to-ubuntu-blue-1 bg-ubuntu-gray-1 rounded-s bg-no-repeat; 
+}
+
+.volume-slider::-moz-range-thumb {
+  -webkit-appearance: none;
+  border-radius: 50%;
+  cursor: pointer;
+  @apply bg-white h-5 w-5;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border-radius: 50%;
+  cursor: pointer;
+  @apply bg-white h-5 w-5;
+}

@@ -1,4 +1,3 @@
-import * as React from "react";
 import { SVGProps } from "@/interfaces";
 
 const Lock = ({ color = "currentColor", size }: SVGProps) => (
