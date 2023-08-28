@@ -25,6 +25,7 @@ body {
     )
     rgb(var(--background-start-rgb));
   overscroll-behavior: none;
+  overflow: hidden;
 }
 
 .drop-down-expand-enter {
