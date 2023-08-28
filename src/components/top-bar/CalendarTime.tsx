@@ -14,8 +14,6 @@ const CalendarTime = () => {
 
   const ref = useRef<HTMLDivElement>(null);
   const isOpened = topBarDropDown.openedMenu === calendarMenu;
-  
-  // useClickOutside(ref, () => changeMenu(null));
 
   return (
     <div ref={ref}>
