@@ -2,6 +2,7 @@
 import { useContext } from "react";
 import { Context } from "./ContextProvider";
 import DraggableWindow from "./DraggableWindow";
+import { CSSTransition } from "react-transition-group";
 
 const DisplayWindows = () => {
   const {windows, focusWindow, closeWindow} = useContext(Context);
@@ -9,15 +10,15 @@ const DisplayWindows = () => {
   return (
     <>
       {windows.map((window, index) => (
-        <DraggableWindow
-          key={window.name}
-          zIndex={window.zIndex}
-          focusWindow={() => focusWindow(index)}
-          closeWindow={() => closeWindow(index)}
-          topBarChildren={window.topBarComp}
-        >
-          {window.wrappedComp}
-        </DraggableWindow>
+          <DraggableWindow
+            key={window.name}
+            zIndex={window.zIndex}
+            focusWindow={() => focusWindow(index)}
+            closeWindow={() => closeWindow(index)}
+            topBarChildren={window.topBarComp}
+          >
+            {window.wrappedComp}
+          </DraggableWindow>
       ))}
       {/* <DraggableWindow
         name="first window"
