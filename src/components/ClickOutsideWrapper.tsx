@@ -1,10 +1,11 @@
 import {
   useEffect,
   RefObject,
+  ReactNode,
 } from "react";
 
 interface Props {
-    children: string | JSX.Element | JSX.Element[];
+    children: ReactNode;
     myRef: RefObject<HTMLElement>;
     handleClick: () => void;
 }
