@@ -18,6 +18,7 @@ interface Window {
   zIndex: number;
   topBarComp: ReactNode;
   wrappedComp: ReactNode;
+  isMinimized: boolean;
 }
 
 interface ContextType {
@@ -26,13 +27,14 @@ interface ContextType {
   volume: number;
   changeVolume: (volume: number) => void;
   windows: Window[];
-  addWindow: (
+  openWindow: (
     name: string,
     topBarComp: ReactNode,
     wrappedComp: ReactNode
   ) => void;
   focusWindow: (windowIndex: number) => void;
   closeWindow: (windowIndex: number) => void;
+  minimizeWindow: (windowIndex: number) => void;
 }
 
 const defaultState = {
@@ -44,9 +46,10 @@ const defaultState = {
   changeMenu: () => {},
   changeVolume: () => {},
   windows: [],
-  addWindow: () => {},
+  openWindow: () => {},
   focusWindow: () => {},
   closeWindow: () => {},
+  minimizeWindow: () => {},
 };
 
 export const Context = createContext<ContextType>(defaultState);
@@ -68,17 +71,29 @@ export const ContextProvider = ({children}: Props) => {
         setCurrentVolume(volume);
     }
 
-    const addWindow = (name: string, topBarComp: ReactNode, wrappedComp: ReactNode) => {
+    const openWindow = (name: string, topBarComp: ReactNode, wrappedComp: ReactNode) => {
       const windowIndex = windows.map(window => window.name).indexOf(name);
+      console.log(
+        "windows[windowIndex].minimized",
+        windows[windowIndex]
+      );
       if(windowIndex === -1){
+        console.log("windowIndex === -1");
         setWindows((prevWindows) => [
           ...prevWindows,
-          { name,
+          {
+            name,
             zIndex: prevWindows.length + 1,
             topBarComp,
-            wrappedComp
+            wrappedComp,
+            isMinimized: false,
           },
         ]);
+      }else if(!!windows[windowIndex].isMinimized){
+        console.log("test")
+         const newWindow = [...windows];
+         newWindow[windowIndex].isMinimized = false;
+         setWindows(newWindow);
       }
     }
 
@@ -118,6 +133,12 @@ export const ContextProvider = ({children}: Props) => {
       setWindows(windowsCopy);
     }
 
+    const minimizeWindow = (windowIndex: number) => {
+      const windowsCopy = [...windows];
+      windowsCopy[windowIndex].isMinimized = true;
+      setWindows(windowsCopy);
+    }
+
     return (
       <Context.Provider
         value={{
@@ -126,9 +147,10 @@ export const ContextProvider = ({children}: Props) => {
           volume,
           changeVolume,
           windows,
-          addWindow,
+          openWindow,
           focusWindow,
           closeWindow,
+          minimizeWindow,
         }}
       >
         {children}

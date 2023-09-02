@@ -4,7 +4,7 @@ import DisplayWindows from "@/components/DisplayWindows";
 
 const Desktop = () => {
     return (
-        <div className="h-screen w-full bg-jellyfish bg-no-repeat bg-cover bg-center relative">
+        <div className="h-screen w-full flex flex-col bg-jellyfish bg-no-repeat bg-cover bg-center relative">
             <TopBar />
             <TaskBar />
             <DisplayWindows />

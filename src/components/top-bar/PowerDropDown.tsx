@@ -2,7 +2,7 @@
 import Power from "../svgs/Power";
 import { ChevronDown, ChevronRight } from "../svgs/Chevrons";
 import { useState } from "react";
-import { CSSTransition } from "react-transition-group";
+import TransitionComp from "../TransitionComp";
 
 const PowerDropDown = () => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -35,7 +35,7 @@ const PowerDropDown = () => {
             </span>
           </div>
         </div>
-        <CSSTransition
+        <TransitionComp
           in={isExpanded}
           timeout={300}
           classNames="drop-down-expand"
@@ -50,7 +50,7 @@ const PowerDropDown = () => {
             <li className="py-2">Power Off...</li>
             <li className="py-2">Reset Ubuntu...</li>
           </ul>
-        </CSSTransition>
+        </TransitionComp>
       </>
     );
 }
