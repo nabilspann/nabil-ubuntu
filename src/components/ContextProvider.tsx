@@ -19,6 +19,7 @@ interface Window {
   topBarComp: ReactNode;
   wrappedComp: ReactNode;
   isMinimized: boolean;
+  positionObj: DOMRect;
 }
 
 interface ContextType {
@@ -30,7 +31,8 @@ interface ContextType {
   openWindow: (
     name: string,
     topBarComp: ReactNode,
-    wrappedComp: ReactNode
+    wrappedComp: ReactNode,
+    positionObj: DOMRect,
   ) => void;
   focusWindow: (windowIndex: number) => void;
   closeWindow: (windowIndex: number) => void;
@@ -71,22 +73,18 @@ export const ContextProvider = ({children}: Props) => {
         setCurrentVolume(volume);
     }
 
-    const openWindow = (name: string, topBarComp: ReactNode, wrappedComp: ReactNode) => {
+    const openWindow = (name: string, topBarComp: ReactNode, wrappedComp: ReactNode, positionObj: DOMRect) => {
       const windowIndex = windows.map(window => window.name).indexOf(name);
-      console.log(
-        "windows[windowIndex].minimized",
-        windows[windowIndex]
-      );
       if(windowIndex === -1){
-        console.log("windowIndex === -1");
         setWindows((prevWindows) => [
           ...prevWindows,
           {
             name,
-            zIndex: prevWindows.length + 1,
+            zIndex: prevWindows.length + 2,
             topBarComp,
             wrappedComp,
             isMinimized: false,
+            positionObj,
           },
         ]);
       }else if(!!windows[windowIndex].isMinimized){
@@ -102,13 +100,13 @@ export const ContextProvider = ({children}: Props) => {
       const windowsCopy = windows.map((window, index) => {
         //Puts the z-index of the focused window to the top
         if (windowIndex === index) {
-          return { ...window, zIndex: windows.length };
+          return { ...window, zIndex: windows.length * 2 };
         } else if (currentZIndex > window.zIndex) {
           return window;
         }
         //Make sure the z-indexes of rest of windows is below the focused window
         else {
-          return { ...window, zIndex: window.zIndex - 1 };
+          return { ...window, zIndex: window.zIndex - 2 };
         }
       });
       setWindows(windowsCopy);

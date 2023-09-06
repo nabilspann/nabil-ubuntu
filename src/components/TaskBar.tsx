@@ -15,15 +15,17 @@ const TaskBar = () => {
       >
         <div>
           <TaskIconWrapper
-            handleClick={() =>
-              openWindow(
+            handleClick={(positionObj) => {
+              // console.log("positionObj", positionObj);
+              return openWindow(
                 "document viewer 1",
                 <div className="flex items-center mx-auto w-fit h-full">
                   Nabil&apos;s Resume 1
                 </div>,
-                <div className="bg-white h-full">Test</div>
-              )
-            }
+                <div className="bg-white h-full">Test</div>,
+                positionObj
+              );
+            }}
           >
             <Image
               src={documentViewer}
@@ -33,13 +35,14 @@ const TaskBar = () => {
             />
           </TaskIconWrapper>
           <TaskIconWrapper
-            handleClick={() =>
+            handleClick={(positionObj) =>
               openWindow(
                 "document viewer 2",
                 <div className="flex items-center mx-auto w-fit h-full">
                   Nabil&apos;s Resume 2
                 </div>,
-                <div className="bg-indigo-900 h-full">Test</div>
+                <div className="bg-indigo-900 h-full">Test</div>,
+                positionObj
               )
             }
           >
@@ -51,13 +54,14 @@ const TaskBar = () => {
             />
           </TaskIconWrapper>
           <TaskIconWrapper
-            handleClick={() =>
+            handleClick={(positionObj) =>
               openWindow(
                 "document viewer 3",
                 <div className="flex items-center mx-auto w-fit h-full">
                   Nabil&apos;s Resume 3
                 </div>,
-                <div className="bg-lime-900 h-full">Test</div>
+                <div className="bg-lime-900 h-full">Test</div>,
+                positionObj
               )
             }
           >
@@ -69,13 +73,14 @@ const TaskBar = () => {
             />
           </TaskIconWrapper>
           <TaskIconWrapper
-            handleClick={() =>
+            handleClick={(positionObj) =>
               openWindow(
                 "document viewer 4",
                 <div className="flex items-center mx-auto w-fit h-full">
                   Nabil&apos;s Resume 4
                 </div>,
-                <div className="bg-red-900 h-full">Test</div>
+                <div className="bg-red-900 h-full">Test</div>,
+                positionObj
               )
             }
           >

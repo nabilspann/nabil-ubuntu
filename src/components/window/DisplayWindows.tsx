@@ -10,7 +10,7 @@ import {
   restrictToParentElement,
   restrictToWindowEdges,
 } from "@dnd-kit/modifiers";
-import { Context } from "./ContextProvider";
+import { Context } from "../ContextProvider";
 import DraggableWindow from "./DraggableWindow";
 
 let knightPosition = [0, 0]
@@ -68,6 +68,7 @@ const DisplayWindows = () => {
             closeWindow={() => closeWindow(index)}
             minimizeWindow={() => minimizeWindow(index)}
             topBarChildren={window.topBarComp}
+            positionObj={window.positionObj}
           >
             {window.wrappedComp}
           </DraggableWindow>

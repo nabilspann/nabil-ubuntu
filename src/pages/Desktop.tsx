@@ -1,6 +1,6 @@
 import TopBar from "@/components/TopBar";
 import TaskBar from "@/components/TaskBar";
-import DisplayWindows from "@/components/DisplayWindows";
+import DisplayWindows from "@/components/window/DisplayWindows";
 
 const Desktop = () => {
     return (
