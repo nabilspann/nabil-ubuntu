@@ -4,12 +4,14 @@ import {
   ReactNode,
   useEffect,
   useState,
-  MutableRefObject
+  MutableRefObject,
 } from "react";
-import { useDraggable, useDndMonitor } from "@dnd-kit/core";
+import { useDraggable, useDndMonitor, DragMoveEvent, } from "@dnd-kit/core";
 import {
   getEventCoordinates,
+  Transform
 } from "@dnd-kit/utilities";
+import { createSnapModifier } from "@dnd-kit/modifiers";
 import TransitionComp from "../TransitionComp";
 import WindowClose from "../svgs/WindowClose";
 import WindowRestore from "../svgs/WindowRestore";
@@ -29,27 +31,39 @@ interface Props {
   name: string;
   isMinimized: boolean;
   positionObj: DOMRect;
+  getDraggedWindowRect: (windowRect: DOMRect | null) => void;
 };
 
 interface WindowSettings {
   isOpen: boolean;
-  type: "close-window" | "minimize-window" |  null;
+  type: "close-window" | "minimize-window" | null;
   position: {
-    x: number,
-    y: number,
+    x: number;
+    y: number;
   };
+  size: {
+    width: number;
+    height: number;
+  };
+  transform: string | undefined;
 }
 
 const iconListClass =
   "rounded-full bg-ubuntu-gray-3 mx-2 p-1 hover:bg-zinc-700";
 
-const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, closeWindow, minimizeWindow, isMinimized, positionObj }: Props) => {
+const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, closeWindow, minimizeWindow, isMinimized, positionObj, getDraggedWindowRect }: Props) => {
   const windowId = `draggable-${name}`;
+  const resizableBoxId = `resizableBox-${name}`;
   const { innerWidth, innerHeight } = window;
   const [windowSettings, setWindowSettings] = useState<WindowSettings>({
     isOpen: true,
     type: null,
     position: { x: innerWidth * 0.3, y: innerHeight * 0.1 },
+    size: {
+      width: innerWidth * 0.4,
+      height: innerHeight * 0.6,
+    },
+    transform: undefined
   });
 
   // const widthDifference =
@@ -62,22 +76,38 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
       id: windowId,
     });
     
-  const componentPosition = node.current?.getBoundingClientRect();
+  const componentPosition = node.current ? node.current?.getBoundingClientRect() : null;
 
-  const transformStyles = transform
-    ? {
+  // const transformStyles = transform
+  //   ? {
+  //       transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+  //     }
+  //   : undefined;
+
+  let transformStyles = null;
+  if(transform){
+    transformStyles = {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      }
-    : undefined;
+    }
+  }
+  else if(!!windowSettings.transform){
+    transformStyles = {
+      transform: windowSettings.transform,
+    };
+  }
 
   useDndMonitor({
-    // onDragStart(props){
-    //   if ("draggableId" === props.active.id) {
-    //     // const coordinates = getEventCoordinates(props.activatorEvent);
-    //     console.log("onDragStart test", props);
-    //     // console.log("coordinates", coordinates);
-    //   }
-    // },
+    onDragStart(props){
+      if (`resizableBox-${name}` === props.active.id) {
+        // const coordinates = getEventCoordinates(props.activatorEvent);
+        // console.log("onDragStart test", props);
+        // console.log("coordinates", coordinates);
+        getDraggedWindowRect(componentPosition);
+      }
+      else{
+        getDraggedWindowRect(null);
+      }
+    },
     // onDragOver(props){
     //   if ("draggableId" === props.active.id) {
     //     // const coordinates = getEventCoordinates(props.activatorEvent);
@@ -110,24 +140,56 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
           };
         });
       }
+      if(resizableBoxId === id){
+        setWindowSettings(prevSettings => ({
+          ...prevSettings,
+          transform: undefined
+        }))
+      }
     },
   });
 
-  const resizeWindow = (boxNode: MutableRefObject<HTMLElement | null>) => {
+  const gridFormat = (transformCoordinate: number) =>
+    Math.ceil(transformCoordinate / 30) * 30;
+
+  const resizeWindow = (boxNode: MutableRefObject<HTMLElement | null>, dragMove: DragMoveEvent, boxTransform: Transform | null) => {
     const boxCoordinates = boxNode.current?.getBoundingClientRect();
+    const {delta} = dragMove;
+    console.log("delta", delta)
+    // console.log("resize")
     if (boxCoordinates && node.current) {
       const relativeBoxPosition = {
-        x: Math.round(boxCoordinates.x) - node.current?.offsetLeft,
-        y: Math.round(boxCoordinates.y) - node.current?.offsetTop,
+        x: boxCoordinates.x - node.current?.offsetLeft,
+        y: boxCoordinates.y - node.current?.offsetTop,
       };
-      console.log("resize", relativeBoxPosition);
+      // console.log("boxTransform", boxTransform)
+      setWindowSettings((prevSettings) => {
+        const {
+          position: { x, y },
+          size: {width, height}
+        } = prevSettings;
+        return {
+          ...prevSettings,
+          size: {
+            width: width - delta.x *.3,
+            height: height - delta.y * .3,
+          },
+          // transform: boxTransform ? `translate3d(${boxTransform.x}px, ${boxTransform.y}px, 0)` : undefined,
+          // transform: boxTransform
+          //   ? `translate3d(${gridFormat(boxTransform.x)}px, ${gridFormat(
+          //       boxTransform.y
+          //     )}px, 0)`
+          //   : undefined,
+          // position: {
+          //   x: x + delta.x,
+          //   y: y + delta.y,
+          // },
+        };
+      });
+      // console.log("dragmove", dragMove)
+      // console.log("resize", relativeBoxPosition);
     }
   };
-
-  // console.log(
-  //   "ref.current?.offsetWidth draggable",
-  //   ref.current?.getBoundingClientRect()
-  // );
 
   useEffect(() => {
     if (!isMinimized) {
@@ -159,14 +221,14 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
     return <></>;
   }
 
-  console.log("ref.current", node.current?.offsetLeft)
+  // console.log("ref.current", node.current?.offsetLeft)
   setNodeRef(node.current);
   return (
     <TransitionComp
       in={windowSettings.isOpen}
       timeout={500}
       onExit={() => {
-        console.log("onExit");
+        // console.log("onExit");
         if (windowSettings.type === MINIMIZE_WINDOW) {
           setAnimatedStyles({
             position: "absolute",
@@ -188,7 +250,7 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
         }
       }}
       onExited={() => {
-        console.log("onExited");
+        // console.log("onExited");
         if (windowSettings.type === CLOSE_WINDOW) {
           closeWindow();
         } else if (windowSettings.type === MINIMIZE_WINDOW) {
@@ -204,12 +266,14 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
         onFocus={focusWindow}
         className={`flex flex-col border-black border-2 rounded-xl overflow-hidden absolute`}
         style={{
-          ...transformStyles,
-          width: "40%",
-          height: "60%",
+          // width: "40%",
+          width: windowSettings.size.width,
+          height: windowSettings.size.height,
           zIndex,
           left: windowSettings.position.x,
           top: windowSettings.position.y,
+          // transform: windowSettings.transform,
+          ...transformStyles,
           ...animatedStyles,
         }}
         {...listeners}
@@ -217,7 +281,11 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
       >
         <div className="bg-ubuntu-dark-2 h-14 flex flex-row w-full">
           <div className="w-1/5 -ml-6 -mt-6">
-            <ResizeWindowBox zIndex={zIndex + 1} id="draggableId" resizeWindow={resizeWindow}/>
+            <ResizeWindowBox
+              zIndex={zIndex + 1}
+              id={resizableBoxId}
+              resizeWindow={resizeWindow}
+            />
           </div>
           <div className="w-full">{topBarChildren}</div>
           <div className="w-1/4">
