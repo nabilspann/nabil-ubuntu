@@ -19,7 +19,7 @@ interface Window {
   topBarComp: ReactNode;
   wrappedComp: ReactNode;
   isMinimized: boolean;
-  positionObj: DOMRect;
+  dockIconRect: DOMRect;
 }
 
 interface ContextType {
@@ -32,7 +32,7 @@ interface ContextType {
     name: string,
     topBarComp: ReactNode,
     wrappedComp: ReactNode,
-    positionObj: DOMRect,
+    dockIconRect: DOMRect,
   ) => void;
   focusWindow: (windowIndex: number) => void;
   closeWindow: (windowIndex: number) => void;
@@ -73,7 +73,7 @@ export const ContextProvider = ({children}: Props) => {
         setCurrentVolume(volume);
     }
 
-    const openWindow = (name: string, topBarComp: ReactNode, wrappedComp: ReactNode, positionObj: DOMRect) => {
+    const openWindow = (name: string, topBarComp: ReactNode, wrappedComp: ReactNode, dockIconRect: DOMRect) => {
       const windowIndex = windows.map(window => window.name).indexOf(name);
       if(windowIndex === -1){
         setWindows((prevWindows) => [
@@ -84,7 +84,7 @@ export const ContextProvider = ({children}: Props) => {
             topBarComp,
             wrappedComp,
             isMinimized: false,
-            positionObj,
+            dockIconRect,
           },
         ]);
       }else if(!!windows[windowIndex].isMinimized){

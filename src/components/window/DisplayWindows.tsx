@@ -172,7 +172,7 @@ const DisplayWindows = () => {
             closeWindow={() => closeWindow(index)}
             minimizeWindow={() => minimizeWindow(index)}
             topBarChildren={window.topBarComp}
-            positionObj={window.positionObj}
+            dockIconRect={window.dockIconRect}
             getDraggedWindowRect={getDraggedWindowRect}
           >
             {window.wrappedComp}
