@@ -46,15 +46,111 @@ interface WindowSettings {
     width: number;
     height: number;
   };
-  transform: string | undefined;
+}
+
+type OnMouseDown = (
+    mouseDownEvent: ReactMouseEvent,
+    onMouseMove: OnMouseMove,
+    sizeDeltaX: number,
+    sizeDeltaY: number,
+    positionDeltaX: number,
+    positionDeltaY: number
+  ) => void;
+
+type OnMouseMove = (
+  mouseMoveEvent: MouseEvent,
+  settings: WindowSettings,
+  mouseDownEvent: ReactMouseEvent,
+  sizeDeltaX: number,
+  sizeDeltaY: number,
+  positionDeltaX: number,
+  positionDeltaY: number
+) => void;
+
+interface WindowResizers {
+  zIndex: number;
+  resizableBoxId: (location: string) => string;
+  onMouseDown: OnMouseDown;
+  onMouseMove: OnMouseMove;
 }
 
 const iconListClass =
   "rounded-full bg-ubuntu-gray-3 mx-2 p-1 hover:bg-zinc-700";
 
+const SideResizers = ({
+  zIndex,
+  resizableBoxId,
+  onMouseDown,
+  onMouseMove,
+}: WindowResizers) => (
+  <>
+    <ResizeWindowBox
+      zIndex={zIndex + 1}
+      id={resizableBoxId("right-side")}
+      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, 0, 0, 0)}
+      className="h-full w-5 -mr-2 absolute right-0 cursor-ew-resize"
+    />
+    <ResizeWindowBox
+      zIndex={zIndex + 1}
+      id={resizableBoxId("left-side")}
+      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, 0, 1, 0)}
+      className="h-full w-5 -ml-2 absolute left-0 cursor-ew-resize"
+    />
+    <ResizeWindowBox
+      zIndex={zIndex + 1}
+      id={resizableBoxId("top-side")}
+      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 0, -1, 0, 1)}
+      className="w-full h-5 -mt-2 absolute top-0 cursor-ns-resize"
+    />
+    <ResizeWindowBox
+      zIndex={zIndex + 1}
+      id={resizableBoxId("bottom-side")}
+      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 0, 1, 0, 0)}
+      className="w-full h-5 -mt-2 absolute bottom-0 cursor-ns-resize"
+    />
+  </>
+);
+
+const CornerResizers = ({
+  zIndex,
+  resizableBoxId,
+  onMouseDown,
+  onMouseMove,
+}: WindowResizers) => (
+  <>
+    <ResizeWindowBox
+      zIndex={zIndex + 1}
+      id={resizableBoxId("bottom-right-corner")}
+      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, 1, 0, 0)}
+      className="h-1 w-1 p-3 -mr-2 -mb-2 absolute bottom-0 right-0 cursor-nwse-resize"
+    />
+    <ResizeWindowBox
+      zIndex={zIndex + 1}
+      id={resizableBoxId("top-left-corner")}
+      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, -1, 1, 1)}
+      className="h-1 w-1 p-3 -ml-2 -mt-2 absolute top-0 left-0 cursor-nwse-resize"
+    />
+    <ResizeWindowBox
+      zIndex={zIndex + 1}
+      id={resizableBoxId("bottom-left-corner")}
+      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, 1, 1, 0)}
+      className="h-1 w-1 p-3 -ml-2 -mb-2 absolute bottom-0 left-0 cursor-nesw-resize"
+    />
+    <ResizeWindowBox
+      zIndex={zIndex + 1}
+      id={resizableBoxId("top-right-corner")}
+      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, -1, 0, 1)}
+      className="h-1 w-1 p-3 -mt-2 -mr-2 absolute top-0 right-0 cursor-nesw-resize"
+    />
+  </>
+);
+
 const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, closeWindow, minimizeWindow, isMinimized, dockIconRect, getDraggedWindowRect }: Props) => {
   const windowId = `draggable-${name}`;
-  const resizableBoxId = `resizableBox-${name}`;
+  const RESIZABLE_BOX = "resizableBox";
+  const resizableBoxId = (location: string) =>
+    `${RESIZABLE_BOX}-${location}-${name}`;
+
   const { innerWidth, innerHeight } = window;
   const [windowSettings, setWindowSettings] = useState<WindowSettings>({
     isOpen: true,
@@ -65,11 +161,10 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
       width: innerWidth * 0.4,
       height: innerHeight * 0.6,
     },
-    transform: undefined,
   });
 
-  console.log(" innerWidth", innerWidth);
-  console.log(" innerHeight", innerHeight);
+  // console.log(" innerWidth", innerWidth);
+  // console.log(" innerHeight", innerHeight);
 
 
   // const widthDifference =
@@ -84,54 +179,38 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
     
   const componentPosition = node.current ? node.current?.getBoundingClientRect() : null;
 
-  // const transformStyles = transform
-  //   ? {
-  //       transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-  //     }
-  //   : undefined;
-
-  let transformStyles = null;
-  if(transform){
-    transformStyles = {
+  const transformStyles = transform
+    ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    }
-  }
-  else if(!!windowSettings.transform){
-    transformStyles = {
-      transform: windowSettings.transform,
-    };
-  }
+      }
+    : undefined;
+
+  // let transformStyles = null;
+  // if(transform){
+  //   transformStyles = {
+  //       transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+  //   }
+  // }
+  // else if(!!windowSettings.transform){
+  //   transformStyles = {
+  //     transform: windowSettings.transform,
+  //   };
+  // }
 
   useDndMonitor({
-    onDragStart(props){
-      if (`resizableBox-${name}` === props.active.id) {
+    onDragStart({ active: { id }}){
+      // if (`resizableBox-${name}` === props.active.id.includes("resizableBox")) {
+
+      if (id.toString().includes(RESIZABLE_BOX)) {
         // const coordinates = getEventCoordinates(props.activatorEvent);
         // console.log("onDragStart test", props);
         // console.log("coordinates", coordinates);
         getDraggedWindowRect(componentPosition);
-      }
-      else{
+      } else {
         getDraggedWindowRect(null);
       }
     },
-    // onDragOver(props){
-    //   if ("draggableId" === props.active.id) {
-    //     // const coordinates = getEventCoordinates(props.activatorEvent);
-    //     console.log("onDragOver test", props);
-    //     // console.log("coordinates", coordinates);
-    //   }
-    // },
-    // onDragMove(props){
-    //   if ("draggableId" === props.active.id) {
-    //     // const coordinates = getEventCoordinates(props.activatorEvent);
-    //     console.log("onDragMove test", props);
-    //     // console.log("coordinates", coordinates);
-    //   }
-    // },
     onDragEnd({ delta, active: { id }, ...rest }) {
-      // if ("draggableId" === id) {
-      //   console.log("test", { delta, active: { id }, ...rest });
-      // }
       if (windowId === id) {
         setWindowSettings((currentSettings) => {
           const {
@@ -146,82 +225,126 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
           };
         });
       }
-      if(resizableBoxId === id){
-        setWindowSettings(currentSettings => ({
-          ...currentSettings,
-          transform: undefined
-        }))
-      }
     },
   });
 
-  const gridFormat = (transformCoordinate: number) =>
-    Math.ceil(transformCoordinate / 30) * 30;
-
-  const resizeWindow = (boxNode: MutableRefObject<HTMLElement | null>, dragMove: DragMoveEvent, boxTransform: Transform | null) => {
-    const boxCoordinates = boxNode.current?.getBoundingClientRect();
-    const {delta} = dragMove;
-    console.log("delta", delta)
-    // console.log("resize")
-    if (boxCoordinates && node.current) {
-      const relativeBoxPosition = {
-        x: boxCoordinates.x - node.current?.offsetLeft,
-        y: boxCoordinates.y - node.current?.offsetTop,
-      };
-      // console.log("boxTransform", boxTransform)
-      setWindowSettings((currentSettings) => {
-        const {
-          position: { x, y },
-          size: {width, height}
-        } = currentSettings;
-        return {
-          ...currentSettings,
-          size: {
-            width: width - delta.x *.3,
-            height: height - delta.y * .3,
-          },
-          // transform: boxTransform ? `translate3d(${boxTransform.x}px, ${boxTransform.y}px, 0)` : undefined,
-          // transform: boxTransform
-          //   ? `translate3d(${gridFormat(boxTransform.x)}px, ${gridFormat(
-          //       boxTransform.y
-          //     )}px, 0)`
-          //   : undefined,
-          // position: {
-          //   x: x + delta.x,
-          //   y: y + delta.y,
-          // },
-        };
-      });
-      // console.log("dragmove", dragMove)
-      // console.log("resize", relativeBoxPosition);
-    }
+  const onMouseMove: OnMouseMove = (
+    mouseMoveEvent,
+    settings,
+    mouseDownEvent,
+    sizeDeltaX,
+    sizeDeltaY,
+    positionDeltaX,
+    positionDeltaY,
+  ) => {
+    const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
+    setWindowSettings(() => ({
+      ...settings,
+      size: {
+        width: settings.size.width + (mouseMoveEvent.pageX - startPosition.x) * sizeDeltaX,
+        height: settings.size.height + (mouseMoveEvent.pageY - startPosition.y) * sizeDeltaY,
+      },
+      position: {
+        x: settings.position.x + (mouseMoveEvent.pageX - startPosition.x) * positionDeltaX,
+        y: settings.position.y + (mouseMoveEvent.pageY - startPosition.y) * positionDeltaY,
+      },
+    }));
   };
 
-  const onMouseDown = (mouseDownEvent: ReactMouseEvent) => {
-    const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
-    // console.log("mouseDownEvent", mouseDownEvent);
-    const onMouseMove = (mouseMoveEvent: MouseEvent) => {
-      console.log("mouseMoveEvent", mouseMoveEvent);
-      // setWindowSettings(currentSettings => ({
-      //   ...currentSettings,
-      //   size: {
-      //     width: currentSettings.size.width + startPosition.x - mouseMoveEvent.pageX,
-      //     height: currentSettings.size.height + startPosition.y - mouseMoveEvent.pageY,
-      //   }
-      // }))
-      setWindowSettings(currentSettings => ({
-        ...currentSettings,
-        size: {
-          width: currentSettings.size.width - startPosition.x + mouseMoveEvent.pageX,
-          height: currentSettings.size.height - startPosition.y + mouseMoveEvent.pageY,
-        }
-      }))
-    };
+  // const onMouseMoveBottomRight = (mouseMoveEvent: MouseEvent, settings: WindowSettings, mouseDownEvent: ReactMouseEvent) => {
+  //   const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
+  //   setWindowSettings(() => ({
+  //     ...settings,
+  //     size: {
+  //       width:
+  //         settings.size.width - startPosition.x + mouseMoveEvent.pageX,
+  //       height:
+  //         settings.size.height - startPosition.y + mouseMoveEvent.pageY,
+  //     },
+  //   }));
+  // };
 
-    const onMouseUp = () => {
-      document.body.removeEventListener("mousemove", onMouseMove);
+  // const onMouseMoveTopLeft = (
+  //   mouseMoveEvent: MouseEvent,
+  //   settings: WindowSettings,
+  //   mouseDownEvent: ReactMouseEvent
+  // ) => {
+  //   const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
+  //   setWindowSettings(() => ({
+  //     ...settings,
+  //     size: {
+  //       width: settings.size.width + startPosition.x - mouseMoveEvent.pageX,
+  //       height: settings.size.height + startPosition.y - mouseMoveEvent.pageY,
+  //     },
+  //     position: {
+  //       x: settings.position.x + mouseMoveEvent.pageX - startPosition.x,
+  //       y: settings.position.y + mouseMoveEvent.pageY - startPosition.y,
+  //     },
+  //   }));
+  // };
+
+  // const onMouseMoveBottomLeft = (
+  //   mouseMoveEvent: MouseEvent,
+  //   settings: WindowSettings,
+  //   mouseDownEvent: ReactMouseEvent
+  // ) => {
+  //   const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
+  //   setWindowSettings(() => ({
+  //     ...settings,
+  //     size: {
+  //       width: settings.size.width + startPosition.x - mouseMoveEvent.pageX,
+  //       height: settings.size.height - startPosition.y + mouseMoveEvent.pageY,
+  //     },
+  //     position: {
+  //       x: settings.position.x + mouseMoveEvent.pageX - startPosition.x,
+  //       y: settings.position.y,
+  //     }
+  //   }));
+  // };
+
+  // const onMouseMoveTopRight = (
+  //   mouseMoveEvent: MouseEvent,
+  //   settings: WindowSettings,
+  //   mouseDownEvent: ReactMouseEvent
+  // ) => {
+  //   const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
+  //   setWindowSettings(() => ({
+  //     ...settings,
+  //     size: {
+  //       width: settings.size.width - startPosition.x + mouseMoveEvent.pageX,
+  //       height: settings.size.height + startPosition.y - mouseMoveEvent.pageY,
+  //     },
+  //     position: {
+  //       x: settings.position.x,
+  //       y: settings.position.y - startPosition.y + mouseMoveEvent.pageY,
+  //     },
+  //   }));
+  // };
+
+  const onMouseDown: OnMouseDown = (
+    mouseDownEvent,
+    onMouseMove,
+    sizeDeltaX,
+    sizeDeltaY,
+    positionDeltaX,
+    positionDeltaY
+  ) => {
+    const startSettings = { ...windowSettings };
+    const activeMouseMove = (e: MouseEvent) => {
+      onMouseMove(
+        e,
+        startSettings,
+        mouseDownEvent,
+        sizeDeltaX,
+        sizeDeltaY,
+        positionDeltaX,
+        positionDeltaY
+      );
     };
-    document.body.addEventListener("mousemove", onMouseMove);
+    const onMouseUp = () => {
+      document.body.removeEventListener("mousemove", activeMouseMove);
+    };
+    document.body.addEventListener("mousemove", activeMouseMove);
     document.body.addEventListener("mouseup", onMouseUp, { once: true });
   };
 
@@ -234,12 +357,6 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
     }
   }, [isMinimized]);
 
-  // console.log("dockIconRect", dockIconRect);
-  // console.log("ref.current", ref.current?.offsetWidth);
-  // console.log("innerWidth, innerHeight", innerWidth, innerHeight);
-
-  // console.log("widthDifference", widthDifference);
-  // console.log("heightDifference", heightDifference);
   let yTransform = 0;
   let xTransform = 0;
   let dockIconToWindowWidthRatio = 0;
@@ -250,135 +367,136 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
     dockIconToWindowWidthRatio = dockIconRect.width / componentPosition.width;
     dockIconToWindowHeightRatio = dockIconRect.height / componentPosition.height;
   }
-  // console.log("xTransform", xTransform);
-  // console.log("yTransform", yTransform);
 
   if (isMinimized) {
     return <></>;
   }
 
-  // console.log("dockIconRect", dockIconRect)
-  // console.log("componentPosition", componentPosition);
-  // console.log(
-  //   "dockIconToWindowWidthRatio - xTransform",
-  //   (windowSettings.size.width / 2) * dockIconToWindowWidthRatio - xTransform
-  // );
   setNodeRef(node.current);
   return (
-    // <TransitionComp
-    //   in={windowSettings.isOpen}
-    //   timeout={500}
-    //   onEnter={() => {
-    //     setAnimatedStyles({
-    //       opacity: "1",
-    //       transform: `translate(
-    //         ${
-    //           (windowSettings.size.width / 2) * dockIconToWindowWidthRatio -
-    //           xTransform
-    //         }px,
-    //         ${
-    //           (windowSettings.size.height / 2) * dockIconToWindowHeightRatio -
-    //           yTransform
-    //         }px)
-    //         scale(1)`,
-    //       transition: "all 250ms",
-    //     });
-    //   }}
-    //   onExit={() => {
-    //     if (windowSettings.type === MINIMIZE_WINDOW) {
-    //       setAnimatedStyles({
-    //         position: "absolute",
-    //         opacity: "0.5",
-    //         transform: `translate(${
-    //           xTransform -
-    //           (windowSettings.size.width / 2) * (1 - dockIconToWindowWidthRatio)
-    //         }px, ${
-    //           yTransform -
-    //           (windowSettings.size.height / 2) *
-    //             (1 - dockIconToWindowHeightRatio)
-    //         }px) scale(${dockIconToWindowWidthRatio}, ${dockIconToWindowHeightRatio})`,
-
-    //         transition: "all 250ms",
-    //       });
-    //     }
-    //   }}
-    //   onExited={() => {
-    //     // console.log("onExited");
-    //     if (windowSettings.type === CLOSE_WINDOW) {
-    //       closeWindow();
-    //     } else if (windowSettings.type === MINIMIZE_WINDOW) {
-    //       // setAnimatedStyles({});
-    //       minimizeWindow();
-    //     }
-    //   }}
-    //   classNames={windowSettings.type}
-    //   unmountOnExit
-    // >
-    <div
-      // ref={setNodeRef}
-      // tabIndex={0}
-      onFocus={focusWindow}
-      // className={`flex flex-col border-black border-2 rounded-xl overflow-hidden absolute`}
-      className={` border-black border-2 rounded-xl overflow-hidden relative`}
-      style={{
-        // width: "40%",
-        width: `${windowSettings.size.width}px`,
-        height: `${windowSettings.size.height}px`,
-        zIndex,
-        // left: windowSettings.position.x,
-        // top: windowSettings.position.y,
-        // transform: windowSettings.transform,
-        // ...transformStyles,
-        ...animatedStyles,
+    <TransitionComp
+      in={windowSettings.isOpen}
+      timeout={500}
+      onEnter={() => {
+        setAnimatedStyles({
+          opacity: "1",
+          transform: `translate(
+            ${
+              (windowSettings.size.width / 2) * dockIconToWindowWidthRatio -
+              xTransform
+            }px,
+            ${
+              (windowSettings.size.height / 2) * dockIconToWindowHeightRatio -
+              yTransform
+            }px)
+            scale(1)`,
+          transition: "all 250ms",
+        });
       }}
-      // {...listeners}
-      // {...attributes}
+      onEntered={() => {
+        setAnimatedStyles({});
+      }}
+      onExit={() => {
+        if (windowSettings.type === MINIMIZE_WINDOW) {
+          setAnimatedStyles({
+            position: "absolute",
+            opacity: "0.5",
+            transform: `translate(${
+              xTransform -
+              (windowSettings.size.width / 2) * (1 - dockIconToWindowWidthRatio)
+            }px, ${
+              yTransform -
+              (windowSettings.size.height / 2) *
+                (1 - dockIconToWindowHeightRatio)
+            }px) scale(${dockIconToWindowWidthRatio}, ${dockIconToWindowHeightRatio})`,
+
+            transition: "all 250ms",
+          });
+        }
+      }}
+      onExited={() => {
+        // console.log("onExited");
+        if (windowSettings.type === CLOSE_WINDOW) {
+          closeWindow();
+        } else if (windowSettings.type === MINIMIZE_WINDOW) {
+          // setAnimatedStyles({});
+          minimizeWindow();
+        }
+      }}
+      classNames={windowSettings.type}
+      unmountOnExit
     >
-      <div className="bg-ubuntu-dark-2 h-14 flex flex-row w-full">
-        <div className="w-1/5 -ml-6 -mt-6">
-          <ResizeWindowBox
-            zIndex={zIndex + 1}
-            id={resizableBoxId}
-            resizeWindow={resizeWindow}
-            mouseDownHandler={onMouseDown}
-          />
-        </div>
-        <div className="w-full">{topBarChildren}</div>
-        <div className="w-1/4">
-          <ul className="flex flex-row w-fit float-right items-center h-full">
-            <li
-              className={iconListClass}
-              onClick={() => {
-                setWindowSettings((currentSettings) => ({
-                  ...currentSettings,
-                  isOpen: false,
-                  type: MINIMIZE_WINDOW,
-                }));
-              }}
-            >
-              <WindowMinimize size={20} />
-            </li>
-            <li className={iconListClass}>
-              <WindowRestore size={20} color="#fff" />
-            </li>
-            <li
-              className={iconListClass}
-              onClick={() => {
-                setWindowSettings((currentSettings) => ({
-                  ...currentSettings,
-                  isOpen: false,
-                  type: CLOSE_WINDOW,
-                }));
-              }}
-            >
-              <WindowClose size={20} />
-            </li>
-          </ul>
+      <div
+        ref={setNodeRef}
+        className="absolute"
+        style={{
+          // width: "40%",
+          width: `${windowSettings.size.width}px`,
+          height: `${windowSettings.size.height}px`,
+          zIndex,
+          left: windowSettings.position.x,
+          top: windowSettings.position.y,
+          // transform: windowSettings.transform,
+          ...transformStyles,
+          ...animatedStyles,
+        }}
+        {...listeners}
+        {...attributes}
+      >
+        <SideResizers
+          zIndex={zIndex}
+          resizableBoxId={resizableBoxId}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+        />
+        <CornerResizers
+          zIndex={zIndex}
+          resizableBoxId={resizableBoxId}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+        />
+        <div
+          onFocus={focusWindow}
+          className="flex flex-col h-full w-full border-black border-2 rounded-xl overflow-hidden"
+        >
+          <div className="bg-ubuntu-dark-2 h-14 flex flex-row w-full">
+            <div className="w-full">{topBarChildren}</div>
+            <div className="w-1/4">
+              <ul className="flex flex-row w-fit float-right items-center h-full">
+                <li
+                  className={iconListClass}
+                  onClick={() => {
+                    setWindowSettings((currentSettings) => ({
+                      ...currentSettings,
+                      isOpen: false,
+                      type: MINIMIZE_WINDOW,
+                    }));
+                  }}
+                >
+                  <WindowMinimize size={20} />
+                </li>
+                <li className={iconListClass}>
+                  <WindowRestore size={20} color="#fff" />
+                </li>
+                <li
+                  className={iconListClass}
+                  onClick={() => {
+                    setWindowSettings((currentSettings) => ({
+                      ...currentSettings,
+                      isOpen: false,
+                      type: CLOSE_WINDOW,
+                    }));
+                  }}
+                >
+                  <WindowClose size={20} />
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="w-full h-full">{children}</div>
         </div>
       </div>
-      <div className="w-full h-full">{children}</div>
-    </div>
-    // </TransitionComp>
+    </TransitionComp>
   );
 };
 

@@ -49,8 +49,17 @@ const restrictToBoundingRect = (
     ...transform,
   };
 
+  // console.log("boundingRect.top", boundingRect.top);
+  // console.log("rect", rect);
+  // console.log("rect.top + transform.y", rect.top + transform.y);
+  // console.log(
+  //   "rect.top + transform.y <= boundingRect.top",
+  //   rect.top + transform.y <= boundingRect.top
+  // );
   if (rect.top + transform.y <= boundingRect.top) {
     value.y = boundingRect.top - rect.top;
+    // console.log("value y", value.y)
+    // value.y = boundingRect.top;
   } else if (
     rect.bottom + transform.y >=
     boundingRect.top + boundingRect.height
@@ -60,6 +69,7 @@ const restrictToBoundingRect = (
 
   if (rect.left + transform.x <= boundingRect.left) {
     value.x = boundingRect.left - rect.left;
+    // value.x = boundingRect.left;
   } else if (
     rect.right + transform.x >=
     boundingRect.left + boundingRect.width
@@ -67,6 +77,7 @@ const restrictToBoundingRect = (
     value.x = boundingRect.left + boundingRect.width - rect.right;
   }
 
+  console.log("value", value)
   return value;
 }
 
@@ -78,6 +89,7 @@ const DisplayWindows = () => {
   const ref = useRef<HTMLDivElement>(null);
 
   const getDraggedWindowRect = (windowRect: DOMRect | null) =>{
+    // console.log("windowRect", windowRect)
     setDraggedWindowRect(windowRect);
   };
 
@@ -92,17 +104,16 @@ const DisplayWindows = () => {
   const restrictToDivWrapper: Modifier = ({
     draggingNodeRect,
     transform,
-    windowRect,
-    active,
-    over,
-    scrollableAncestors,
-    scrollableAncestorRects,
   }) => {
     // console.log("windowRect", windowRect);
     // console.log("over", over);
     // console.log("scrollableAncestors", scrollableAncestors);
     // console.log("scrollableAncestorRects", scrollableAncestorRects);
-    // console.log("active", active)
+    // console.log(
+    //   "ref.current?.getBoundingClientRect()",
+    //   ref.current?.getBoundingClientRect()
+    // );
+    // console.log("draggingNOdeRect", draggedWindowRect)
     if (!draggingNodeRect || !ref.current?.getBoundingClientRect()) {
       return transform;
     }
@@ -126,14 +137,17 @@ const DisplayWindows = () => {
     active,
   }) => {
     // console.log("continaerNodeRect", containerNodeRect)
-    if (!draggedWindowRect || !windowRect) {
+    // console.log("draggedWindowRect", draggedWindowRect)
+    // if (!draggedWindowRect || !windowRect) {
+    if (!draggedWindowRect || !ref.current?.getBoundingClientRect()) {
       return transform;
     }
 
     return restrictToBoundingRect(
       transform,
       draggedWindowRect,
-      windowRect
+      // windowRect
+      ref.current?.getBoundingClientRect()
     );
   };
 
@@ -156,7 +170,7 @@ const DisplayWindows = () => {
         sensors={sensors}
         modifiers={[
           restrictWindowToScreenEdges,
-          restrictToDivWrapper,
+          // restrictToDivWrapper,
           restrictToWindowEdges,
           // restrictDivWrapperToWindowEdges,
         ]}
