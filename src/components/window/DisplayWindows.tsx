@@ -77,7 +77,7 @@ const restrictToBoundingRect = (
     value.x = boundingRect.left + boundingRect.width - rect.right;
   }
 
-  console.log("value", value)
+  // console.log("value", value)
   return value;
 }
 
@@ -169,8 +169,8 @@ const DisplayWindows = () => {
       <DndContext
         sensors={sensors}
         modifiers={[
-          restrictWindowToScreenEdges,
-          // restrictToDivWrapper,
+          // restrictWindowToScreenEdges,
+          restrictToDivWrapper,
           restrictToWindowEdges,
           // restrictDivWrapperToWindowEdges,
         ]}

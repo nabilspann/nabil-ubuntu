@@ -4,15 +4,9 @@ import {
   ReactNode,
   useEffect,
   useState,
-  MutableRefObject,
   MouseEvent as ReactMouseEvent,
 } from "react";
-import { useDraggable, useDndMonitor, DragMoveEvent, } from "@dnd-kit/core";
-import {
-  getEventCoordinates,
-  Transform
-} from "@dnd-kit/utilities";
-import { createSnapModifier } from "@dnd-kit/modifiers";
+import { useDraggable, useDndMonitor } from "@dnd-kit/core";
 import TransitionComp from "../TransitionComp";
 import WindowClose from "../svgs/WindowClose";
 import WindowRestore from "../svgs/WindowRestore";
@@ -70,8 +64,8 @@ type OnMouseMove = (
 interface WindowResizers {
   zIndex: number;
   resizableBoxId: (location: string) => string;
-  onMouseDown: OnMouseDown;
-  onMouseMove: OnMouseMove;
+  windowSettings: WindowSettings;
+  setWindowSettings: (settings: WindowSettings) => void;
 }
 
 const iconListClass =
@@ -80,33 +74,65 @@ const iconListClass =
 const SideResizers = ({
   zIndex,
   resizableBoxId,
-  onMouseDown,
-  onMouseMove,
+  windowSettings,
+  setWindowSettings,
 }: WindowResizers) => (
   <>
     <ResizeWindowBox
       zIndex={zIndex + 1}
       id={resizableBoxId("right-side")}
-      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, 0, 0, 0)}
-      className="h-full w-5 -mr-2 absolute right-0 cursor-ew-resize"
+      deltaObj={{
+        sizeDeltaX: 1,
+        sizeDeltaY: 0,
+        positionDeltaX: 0,
+        positionDeltaY: 0,
+      }}
+      windowSettings={windowSettings}
+      setWindowSettings={setWindowSettings}
+      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, 0, 0, 0)}
+      className="h-full w-3 absolute right-0 cursor-ew-resize"
     />
     <ResizeWindowBox
       zIndex={zIndex + 1}
       id={resizableBoxId("left-side")}
-      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, 0, 1, 0)}
-      className="h-full w-5 -ml-2 absolute left-0 cursor-ew-resize"
+      deltaObj={{
+        sizeDeltaX: -1,
+        sizeDeltaY: 0,
+        positionDeltaX: 1,
+        positionDeltaY: 0,
+      }}
+      windowSettings={windowSettings}
+      setWindowSettings={setWindowSettings}
+      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, 0, 1, 0)}
+      className="h-full w-3 absolute left-0 cursor-ew-resize"
     />
     <ResizeWindowBox
       zIndex={zIndex + 1}
       id={resizableBoxId("top-side")}
-      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 0, -1, 0, 1)}
-      className="w-full h-5 -mt-2 absolute top-0 cursor-ns-resize"
+      deltaObj={{
+        sizeDeltaX: 0,
+        sizeDeltaY: -1,
+        positionDeltaX: 0,
+        positionDeltaY: 1,
+      }}
+      windowSettings={windowSettings}
+      setWindowSettings={setWindowSettings}
+      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 0, -1, 0, 1)}
+      className="w-full h-3 absolute top-0 cursor-ns-resize"
     />
     <ResizeWindowBox
       zIndex={zIndex + 1}
       id={resizableBoxId("bottom-side")}
-      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 0, 1, 0, 0)}
-      className="w-full h-5 -mt-2 absolute bottom-0 cursor-ns-resize"
+      deltaObj={{
+        sizeDeltaX: 0,
+        sizeDeltaY: 1,
+        positionDeltaX: 0,
+        positionDeltaY: 0,
+      }}
+      windowSettings={windowSettings}
+      setWindowSettings={setWindowSettings}
+      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 0, 1, 0, 0)}
+      className="w-full h-3 absolute bottom-0 cursor-ns-resize"
     />
   </>
 );
@@ -114,33 +140,65 @@ const SideResizers = ({
 const CornerResizers = ({
   zIndex,
   resizableBoxId,
-  onMouseDown,
-  onMouseMove,
+  windowSettings,
+  setWindowSettings,
 }: WindowResizers) => (
   <>
     <ResizeWindowBox
       zIndex={zIndex + 1}
       id={resizableBoxId("bottom-right-corner")}
-      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, 1, 0, 0)}
-      className="h-1 w-1 p-3 -mr-2 -mb-2 absolute bottom-0 right-0 cursor-nwse-resize"
+      deltaObj={{
+        sizeDeltaX: 1,
+        sizeDeltaY: 1,
+        positionDeltaX: 0,
+        positionDeltaY: 0,
+      }}
+      windowSettings={windowSettings}
+      setWindowSettings={setWindowSettings}
+      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, 1, 0, 0)}
+      className="h-1 w-1 p-2 absolute bottom-0 right-0 cursor-nwse-resize"
     />
     <ResizeWindowBox
       zIndex={zIndex + 1}
       id={resizableBoxId("top-left-corner")}
-      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, -1, 1, 1)}
-      className="h-1 w-1 p-3 -ml-2 -mt-2 absolute top-0 left-0 cursor-nwse-resize"
+      deltaObj={{
+        sizeDeltaX: -1,
+        sizeDeltaY: -1,
+        positionDeltaX: 1,
+        positionDeltaY: 1,
+      }}
+      windowSettings={windowSettings}
+      setWindowSettings={setWindowSettings}
+      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, -1, 1, 1)}
+      className="h-1 w-1 p-2 absolute top-0 left-0 cursor-nwse-resize"
     />
     <ResizeWindowBox
       zIndex={zIndex + 1}
       id={resizableBoxId("bottom-left-corner")}
-      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, 1, 1, 0)}
-      className="h-1 w-1 p-3 -ml-2 -mb-2 absolute bottom-0 left-0 cursor-nesw-resize"
+      deltaObj={{
+        sizeDeltaX: -1,
+        sizeDeltaY: 1,
+        positionDeltaX: 1,
+        positionDeltaY: 0,
+      }}
+      windowSettings={windowSettings}
+      setWindowSettings={setWindowSettings}
+      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, 1, 1, 0)}
+      className="h-1 w-1 p-2 absolute bottom-0 left-0 cursor-nesw-resize"
     />
     <ResizeWindowBox
       zIndex={zIndex + 1}
       id={resizableBoxId("top-right-corner")}
-      mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, -1, 0, 1)}
-      className="h-1 w-1 p-3 -mt-2 -mr-2 absolute top-0 right-0 cursor-nesw-resize"
+      deltaObj={{
+        sizeDeltaX: 1,
+        sizeDeltaY: -1,
+        positionDeltaX: 0,
+        positionDeltaY: 1,
+      }}
+      windowSettings={windowSettings}
+      setWindowSettings={setWindowSettings}
+      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, -1, 0, 1)}
+      className="h-1 w-1 p-2 absolute top-0 right-0 cursor-nesw-resize"
     />
   </>
 );
@@ -228,126 +286,6 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
     },
   });
 
-  const onMouseMove: OnMouseMove = (
-    mouseMoveEvent,
-    settings,
-    mouseDownEvent,
-    sizeDeltaX,
-    sizeDeltaY,
-    positionDeltaX,
-    positionDeltaY,
-  ) => {
-    const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
-    setWindowSettings(() => ({
-      ...settings,
-      size: {
-        width: settings.size.width + (mouseMoveEvent.pageX - startPosition.x) * sizeDeltaX,
-        height: settings.size.height + (mouseMoveEvent.pageY - startPosition.y) * sizeDeltaY,
-      },
-      position: {
-        x: settings.position.x + (mouseMoveEvent.pageX - startPosition.x) * positionDeltaX,
-        y: settings.position.y + (mouseMoveEvent.pageY - startPosition.y) * positionDeltaY,
-      },
-    }));
-  };
-
-  // const onMouseMoveBottomRight = (mouseMoveEvent: MouseEvent, settings: WindowSettings, mouseDownEvent: ReactMouseEvent) => {
-  //   const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
-  //   setWindowSettings(() => ({
-  //     ...settings,
-  //     size: {
-  //       width:
-  //         settings.size.width - startPosition.x + mouseMoveEvent.pageX,
-  //       height:
-  //         settings.size.height - startPosition.y + mouseMoveEvent.pageY,
-  //     },
-  //   }));
-  // };
-
-  // const onMouseMoveTopLeft = (
-  //   mouseMoveEvent: MouseEvent,
-  //   settings: WindowSettings,
-  //   mouseDownEvent: ReactMouseEvent
-  // ) => {
-  //   const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
-  //   setWindowSettings(() => ({
-  //     ...settings,
-  //     size: {
-  //       width: settings.size.width + startPosition.x - mouseMoveEvent.pageX,
-  //       height: settings.size.height + startPosition.y - mouseMoveEvent.pageY,
-  //     },
-  //     position: {
-  //       x: settings.position.x + mouseMoveEvent.pageX - startPosition.x,
-  //       y: settings.position.y + mouseMoveEvent.pageY - startPosition.y,
-  //     },
-  //   }));
-  // };
-
-  // const onMouseMoveBottomLeft = (
-  //   mouseMoveEvent: MouseEvent,
-  //   settings: WindowSettings,
-  //   mouseDownEvent: ReactMouseEvent
-  // ) => {
-  //   const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
-  //   setWindowSettings(() => ({
-  //     ...settings,
-  //     size: {
-  //       width: settings.size.width + startPosition.x - mouseMoveEvent.pageX,
-  //       height: settings.size.height - startPosition.y + mouseMoveEvent.pageY,
-  //     },
-  //     position: {
-  //       x: settings.position.x + mouseMoveEvent.pageX - startPosition.x,
-  //       y: settings.position.y,
-  //     }
-  //   }));
-  // };
-
-  // const onMouseMoveTopRight = (
-  //   mouseMoveEvent: MouseEvent,
-  //   settings: WindowSettings,
-  //   mouseDownEvent: ReactMouseEvent
-  // ) => {
-  //   const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
-  //   setWindowSettings(() => ({
-  //     ...settings,
-  //     size: {
-  //       width: settings.size.width - startPosition.x + mouseMoveEvent.pageX,
-  //       height: settings.size.height + startPosition.y - mouseMoveEvent.pageY,
-  //     },
-  //     position: {
-  //       x: settings.position.x,
-  //       y: settings.position.y - startPosition.y + mouseMoveEvent.pageY,
-  //     },
-  //   }));
-  // };
-
-  const onMouseDown: OnMouseDown = (
-    mouseDownEvent,
-    onMouseMove,
-    sizeDeltaX,
-    sizeDeltaY,
-    positionDeltaX,
-    positionDeltaY
-  ) => {
-    const startSettings = { ...windowSettings };
-    const activeMouseMove = (e: MouseEvent) => {
-      onMouseMove(
-        e,
-        startSettings,
-        mouseDownEvent,
-        sizeDeltaX,
-        sizeDeltaY,
-        positionDeltaX,
-        positionDeltaY
-      );
-    };
-    const onMouseUp = () => {
-      document.body.removeEventListener("mousemove", activeMouseMove);
-    };
-    document.body.addEventListener("mousemove", activeMouseMove);
-    document.body.addEventListener("mouseup", onMouseUp, { once: true });
-  };
-
   useEffect(() => {
     if (!isMinimized) {
       setWindowSettings((currentSettings) => ({
@@ -356,6 +294,10 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
       }));
     }
   }, [isMinimized]);
+
+  const changeWindowSettings = (settings: WindowSettings) => {
+    setWindowSettings(settings);
+  };
 
   let yTransform = 0;
   let xTransform = 0;
@@ -446,14 +388,14 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
         <SideResizers
           zIndex={zIndex}
           resizableBoxId={resizableBoxId}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
+          windowSettings={windowSettings}
+          setWindowSettings={changeWindowSettings}
         />
         <CornerResizers
           zIndex={zIndex}
           resizableBoxId={resizableBoxId}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
+          windowSettings={windowSettings}
+          setWindowSettings={changeWindowSettings}
         />
         <div
           onFocus={focusWindow}
