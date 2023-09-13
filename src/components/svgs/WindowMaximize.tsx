@@ -1,8 +1,15 @@
 import * as React from "react";
-const WindowMaximize = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+import { SVGProps } from "@/interfaces";
+
+const WindowMaximize = ({ size, color = "currentColor" }: SVGProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 16 16"
+    width={size}
+    height={size}
+  >
     <path
-      fill="gray"
+      fill={color}
       d="M4 4v8h8V4zm1 1h6v6H5z"
       fontFamily="sans-serif"
       fontWeight={400}

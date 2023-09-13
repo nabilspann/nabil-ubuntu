@@ -87,6 +87,14 @@ const DisplayWindows = () => {
   const [draggedWindowRect, setDraggedWindowRect] = useState<DOMRect | null>(null);
 
   const ref = useRef<HTMLDivElement>(null);
+  const draggableScreenRect = ref.current?.getBoundingClientRect();
+  const formattedScreenRect = {
+    innerXPosition: draggableScreenRect?.x || 0,
+    innerYPosition: draggableScreenRect?.y || 0,
+    innerWidth: draggableScreenRect?.width || window.innerWidth,
+    innerHeight: draggableScreenRect?.height || window.innerHeight,
+  };
+  console.log("ref current",ref.current?.getBoundingClientRect())
 
   const getDraggedWindowRect = (windowRect: DOMRect | null) =>{
     // console.log("windowRect", windowRect)
@@ -188,6 +196,7 @@ const DisplayWindows = () => {
             topBarChildren={window.topBarComp}
             dockIconRect={window.dockIconRect}
             getDraggedWindowRect={getDraggedWindowRect}
+            draggableScreenRect={formattedScreenRect}
           >
             {window.wrappedComp}
           </DraggableWindow>

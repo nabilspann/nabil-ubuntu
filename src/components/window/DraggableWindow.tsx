@@ -4,7 +4,6 @@ import {
   ReactNode,
   useEffect,
   useState,
-  MouseEvent as ReactMouseEvent,
 } from "react";
 import { useDraggable, useDndMonitor } from "@dnd-kit/core";
 import TransitionComp from "../TransitionComp";
@@ -12,6 +11,8 @@ import WindowClose from "../svgs/WindowClose";
 import WindowRestore from "../svgs/WindowRestore";
 import WindowMinimize from "../svgs/WindowMinimize";
 import ResizeWindowBox from "./ResizeWindowBox";
+import { WindowSettings } from "@/interfaces";
+import WindowMaximize from "../svgs/WindowMaximize";
 
 const CLOSE_WINDOW = "close-window";
 const MINIMIZE_WINDOW = "minimize-window";
@@ -27,39 +28,8 @@ interface Props {
   isMinimized: boolean;
   dockIconRect: DOMRect;
   getDraggedWindowRect: (windowRect: DOMRect | null) => void;
+  draggableScreenRect: { innerXPosition: number, innerYPosition: number, innerWidth: number, innerHeight: number},
 };
-
-interface WindowSettings {
-  isOpen: boolean;
-  type: "close-window" | "minimize-window" | null;
-  position: {
-    x: number;
-    y: number;
-  };
-  size: {
-    width: number;
-    height: number;
-  };
-}
-
-type OnMouseDown = (
-    mouseDownEvent: ReactMouseEvent,
-    onMouseMove: OnMouseMove,
-    sizeDeltaX: number,
-    sizeDeltaY: number,
-    positionDeltaX: number,
-    positionDeltaY: number
-  ) => void;
-
-type OnMouseMove = (
-  mouseMoveEvent: MouseEvent,
-  settings: WindowSettings,
-  mouseDownEvent: ReactMouseEvent,
-  sizeDeltaX: number,
-  sizeDeltaY: number,
-  positionDeltaX: number,
-  positionDeltaY: number
-) => void;
 
 interface WindowResizers {
   zIndex: number;
@@ -203,13 +173,29 @@ const CornerResizers = ({
   </>
 );
 
-const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, closeWindow, minimizeWindow, isMinimized, dockIconRect, getDraggedWindowRect }: Props) => {
+const DraggableWindow = ({
+  children,
+  topBarChildren,
+  name,
+  zIndex,
+  focusWindow,
+  closeWindow,
+  minimizeWindow,
+  isMinimized,
+  dockIconRect,
+  getDraggedWindowRect,
+  draggableScreenRect,
+}: Props) => {
   const windowId = `draggable-${name}`;
   const RESIZABLE_BOX = "resizableBox";
   const resizableBoxId = (location: string) =>
     `${RESIZABLE_BOX}-${location}-${name}`;
 
-  const { innerWidth, innerHeight } = window;
+  // const { innerWidth, innerHeight } = window;
+  const { innerXPosition, innerYPosition, innerWidth, innerHeight } = draggableScreenRect;
+  console.log("innerXPosition", innerXPosition);
+  console.log("innerYPosition", innerYPosition);
+
   const [windowSettings, setWindowSettings] = useState<WindowSettings>({
     isOpen: true,
     type: null,
@@ -219,23 +205,30 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
       width: innerWidth * 0.4,
       height: innerHeight * 0.6,
     },
+    fullScreen: {
+      isFullScreen: false,
+      unMaximizedSize: {
+        width: innerWidth * 0.4,
+        height: innerHeight * 0.6,
+      },
+      unMaximizedPosition: {
+        x: innerWidth * 0.3,
+        y: innerHeight * 0.1,
+      },
+    },
   });
 
   // console.log(" innerWidth", innerWidth);
   // console.log(" innerHeight", innerHeight);
 
-
-  // const widthDifference =
-  //   innerWidth - windowSettings.position.x - ref.current?.offsetWidth;
-  // const heightDifference =
-  //   innerHeight - windowSettings.position.y - ref.current?.offsetHeight;
   const [animatedStyles, setAnimatedStyles] = useState<CSSProperties>({});
-  const { attributes, listeners, setNodeRef, transform, node } =
-    useDraggable({
-      id: windowId,
-    });
-    
-  const componentPosition = node.current ? node.current?.getBoundingClientRect() : null;
+  const { attributes, listeners, setNodeRef, transform, node } = useDraggable({
+    id: windowId,
+  });
+
+  const componentPosition = node.current
+    ? node.current?.getBoundingClientRect()
+    : null;
 
   const transformStyles = transform
     ? {
@@ -243,26 +236,9 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
       }
     : undefined;
 
-  // let transformStyles = null;
-  // if(transform){
-  //   transformStyles = {
-  //       transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-  //   }
-  // }
-  // else if(!!windowSettings.transform){
-  //   transformStyles = {
-  //     transform: windowSettings.transform,
-  //   };
-  // }
-
   useDndMonitor({
-    onDragStart({ active: { id }}){
-      // if (`resizableBox-${name}` === props.active.id.includes("resizableBox")) {
-
+    onDragStart({ active: { id } }) {
       if (id.toString().includes(RESIZABLE_BOX)) {
-        // const coordinates = getEventCoordinates(props.activatorEvent);
-        // console.log("onDragStart test", props);
-        // console.log("coordinates", coordinates);
         getDraggedWindowRect(componentPosition);
       } else {
         getDraggedWindowRect(null);
@@ -299,6 +275,37 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
     setWindowSettings(settings);
   };
 
+  const maximizeUnmaximize = () => {
+    if (!windowSettings.fullScreen.isFullScreen) {
+      console.log("not fullscreen", windowSettings.fullScreen);
+      setWindowSettings((currentSettings) => ({
+        ...currentSettings,
+        position: {
+          x: innerXPosition,
+          y: innerYPosition,
+        },
+        size: {
+          width: undefined,
+          height: undefined,
+        },
+        fullScreen: {
+          isFullScreen: true,
+          unMaximizedSize: { ...currentSettings.size },
+          unMaximizedPosition: { ...currentSettings.position },
+        },
+      }));
+    } else if (windowSettings.fullScreen.isFullScreen) {
+      console.log("fullscreen", windowSettings.fullScreen);
+      const currentSettings = { ...windowSettings };
+      currentSettings.fullScreen.isFullScreen = false;
+      currentSettings.size = { ...currentSettings.fullScreen.unMaximizedSize };
+      currentSettings.position = {
+        ...currentSettings.fullScreen.unMaximizedPosition,
+      };
+      setWindowSettings(currentSettings);
+    }
+  };
+
   let yTransform = 0;
   let xTransform = 0;
   let dockIconToWindowWidthRatio = 0;
@@ -307,7 +314,8 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
     yTransform = dockIconRect.top - componentPosition.top;
     xTransform = dockIconRect.left - componentPosition.left;
     dockIconToWindowWidthRatio = dockIconRect.width / componentPosition.width;
-    dockIconToWindowHeightRatio = dockIconRect.height / componentPosition.height;
+    dockIconToWindowHeightRatio =
+      dockIconRect.height / componentPosition.height;
   }
 
   if (isMinimized) {
@@ -320,18 +328,14 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
       in={windowSettings.isOpen}
       timeout={500}
       onEnter={() => {
+        const windowWidth = windowSettings.size.width || innerWidth;
+        const windowHeight = windowSettings.size.height || innerHeight;
         setAnimatedStyles({
           opacity: "1",
           transform: `translate(
-            ${
-              (windowSettings.size.width / 2) * dockIconToWindowWidthRatio -
-              xTransform
-            }px,
-            ${
-              (windowSettings.size.height / 2) * dockIconToWindowHeightRatio -
-              yTransform
-            }px)
-            scale(1)`,
+          ${(windowWidth / 2) * dockIconToWindowWidthRatio - xTransform}px,
+          ${(windowHeight / 2) * dockIconToWindowHeightRatio - yTransform}px)
+          scale(1)`,
           transition: "all 250ms",
         });
       }}
@@ -340,16 +344,17 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
       }}
       onExit={() => {
         if (windowSettings.type === MINIMIZE_WINDOW) {
+          const windowWidth = windowSettings.size.width || innerWidth;
+          const windowHeight = windowSettings.size.height || innerHeight;
+
           setAnimatedStyles({
             position: "absolute",
             opacity: "0.5",
             transform: `translate(${
-              xTransform -
-              (windowSettings.size.width / 2) * (1 - dockIconToWindowWidthRatio)
+              xTransform - (windowWidth / 2) * (1 - dockIconToWindowWidthRatio)
             }px, ${
               yTransform -
-              (windowSettings.size.height / 2) *
-                (1 - dockIconToWindowHeightRatio)
+              (windowHeight / 2) * (1 - dockIconToWindowHeightRatio)
             }px) scale(${dockIconToWindowWidthRatio}, ${dockIconToWindowHeightRatio})`,
 
             transition: "all 250ms",
@@ -370,11 +375,13 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
     >
       <div
         ref={setNodeRef}
-        className="absolute"
+        className={`absolute ${
+          windowSettings.fullScreen.isFullScreen ? "w-full h-full" : ""
+        }`}
         style={{
           // width: "40%",
-          width: `${windowSettings.size.width}px`,
-          height: `${windowSettings.size.height}px`,
+          width: windowSettings.size.width,
+          height: windowSettings.size.height,
           zIndex,
           left: windowSettings.position.x,
           top: windowSettings.position.y,
@@ -385,18 +392,22 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
         {...listeners}
         {...attributes}
       >
-        <SideResizers
-          zIndex={zIndex}
-          resizableBoxId={resizableBoxId}
-          windowSettings={windowSettings}
-          setWindowSettings={changeWindowSettings}
-        />
-        <CornerResizers
-          zIndex={zIndex}
-          resizableBoxId={resizableBoxId}
-          windowSettings={windowSettings}
-          setWindowSettings={changeWindowSettings}
-        />
+        {!windowSettings.fullScreen.isFullScreen && (
+          <>
+            <SideResizers
+              zIndex={zIndex}
+              resizableBoxId={resizableBoxId}
+              windowSettings={windowSettings}
+              setWindowSettings={changeWindowSettings}
+            />
+            <CornerResizers
+              zIndex={zIndex}
+              resizableBoxId={resizableBoxId}
+              windowSettings={windowSettings}
+              setWindowSettings={changeWindowSettings}
+            />
+          </>
+        )}
         <div
           onFocus={focusWindow}
           className="flex flex-col h-full w-full border-black border-2 rounded-xl overflow-hidden"
@@ -417,8 +428,12 @@ const DraggableWindow = ({ children, topBarChildren, name, zIndex, focusWindow, 
                 >
                   <WindowMinimize size={20} />
                 </li>
-                <li className={iconListClass}>
-                  <WindowRestore size={20} color="#fff" />
+                <li className={iconListClass} onClick={maximizeUnmaximize}>
+                  {windowSettings.fullScreen.isFullScreen ? (
+                    <WindowMaximize size={20} color="#fff" />
+                  ) : (
+                    <WindowRestore size={20} color="#fff" />
+                  )}
                 </li>
                 <li
                   className={iconListClass}

@@ -6,8 +6,8 @@ import {
   MouseEvent as ReactMouseEvent,
   useState
 } from "react";
-import { DragMoveEvent, useDndMonitor, useDraggable } from "@dnd-kit/core";
-import { Transform } from "@dnd-kit/utilities";
+import { useDndMonitor, useDraggable } from "@dnd-kit/core";
+import { WindowSettings } from "@/interfaces";
 
 type DeltaNumbers = 1 | 0 | -1;
 
@@ -17,38 +17,6 @@ interface DeltaObj {
   positionDeltaX: DeltaNumbers;
   positionDeltaY: DeltaNumbers;
 }
-
-interface WindowSettings {
-  isOpen: boolean;
-  type: "close-window" | "minimize-window" | null;
-  position: {
-    x: number;
-    y: number;
-  };
-  size: {
-    width: number;
-    height: number;
-  };
-}
-
-type OnMouseMove = (
-  mouseMoveEvent: MouseEvent,
-  settings: WindowSettings,
-  mouseDownEvent: ReactMouseEvent,
-  sizeDeltaX: number,
-  sizeDeltaY: number,
-  positionDeltaX: number,
-  positionDeltaY: number,
-) => void;
-
-type OnMouseDown = (
-  mouseDownEvent: ReactMouseEvent,
-  onMouseMove: OnMouseMove,
-  sizeDeltaX: number,
-  sizeDeltaY: number,
-  positionDeltaX: number,
-  positionDeltaY: number
-) => void;
 
 interface Props {
   zIndex: number;
@@ -61,20 +29,9 @@ interface Props {
 
 const ResizeWindowBox = ({zIndex, id, className, windowSettings, setWindowSettings, deltaObj: {sizeDeltaX, sizeDeltaY, positionDeltaX, positionDeltaY}}: Props) => {
   const [currentSettings, setCurrentSettings] = useState<WindowSettings | null>(null);
-  const { attributes, listeners, setNodeRef, node, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
   });
-
-  // console.log("transform render", transform);
-
-  const transformStyles = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        // transform: `translate3d(
-        //   ${gridFormat(transform.x)}px, 
-        //   ${gridFormat(transform.y)}px, 0)`,
-      }
-    : undefined;
 
   useDndMonitor({
     onDragStart(props) {
@@ -83,8 +40,14 @@ const ResizeWindowBox = ({zIndex, id, className, windowSettings, setWindowSettin
       }
     },
     onDragMove(props) {
-      if (id === props.active.id && currentSettings && transform) {
-        console.log("transform", transform)
+      if (
+        id === props.active.id &&
+        currentSettings &&
+        transform &&
+        currentSettings.size.width &&
+        currentSettings.size.height
+      ) {
+        console.log("transform", transform);
         setWindowSettings({
           ...currentSettings,
           size: {
