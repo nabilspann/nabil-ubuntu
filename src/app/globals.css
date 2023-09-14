@@ -47,7 +47,3 @@ body {
   cursor: pointer;
   @apply bg-white h-5 w-5;
 }
-/* 
-.window-full{
-  calc(theme('h-full'))
-} */

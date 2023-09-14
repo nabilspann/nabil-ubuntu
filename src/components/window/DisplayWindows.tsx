@@ -94,7 +94,6 @@ const DisplayWindows = () => {
     innerWidth: draggableScreenRect?.width || window.innerWidth,
     innerHeight: draggableScreenRect?.height || window.innerHeight,
   };
-  console.log("ref current",ref.current?.getBoundingClientRect())
 
   const getDraggedWindowRect = (windowRect: DOMRect | null) =>{
     // console.log("windowRect", windowRect)

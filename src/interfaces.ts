@@ -15,10 +15,12 @@ export interface Position {
 
 export interface WindowSettings {
   isOpen: boolean;
+  isTransitioning: boolean;
   type: "close-window" | "minimize-window" | null;
   position: Position;
   size: Size;
   fullScreen: {
+    isTransitioning: boolean;
     isFullScreen: boolean;
     unMaximizedSize: Size;
     unMaximizedPosition: Position;
