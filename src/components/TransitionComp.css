@@ -23,10 +23,15 @@
   transition: opacity 200ms, transform 200ms;
 }
 
-.minimize-window-enter-active {
-  opacity: 0.5;
+.initialize-window-enter{
+  transform: scale(0.2);
 }
 
-/* .minimize-window-enter-active {
-  opacity: 1;
-} */
+.initialize-window-enter-active{
+  transform: scale(1);
+  transition: transform 200ms ease;
+}
+
+.fullscreen-window-enter {
+  transition: all 150ms linear;
+}

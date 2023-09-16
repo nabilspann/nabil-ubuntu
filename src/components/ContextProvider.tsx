@@ -80,7 +80,7 @@ export const ContextProvider = ({children}: Props) => {
           ...prevWindows,
           {
             name,
-            zIndex: prevWindows.length + 2,
+            zIndex: prevWindows.length + 5,
             topBarComp,
             wrappedComp,
             isMinimized: false,
@@ -97,6 +97,7 @@ export const ContextProvider = ({children}: Props) => {
 
     const focusWindow = (windowIndex: number) => {
       const currentZIndex = windows[windowIndex].zIndex;
+      console.log("focused??")
       const windowsCopy = windows.map((window, index) => {
         //Puts the z-index of the focused window to the top
         if (windowIndex === index) {

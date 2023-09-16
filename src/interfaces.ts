@@ -1,3 +1,5 @@
+import type {CSSProperties} from 'react';
+
 export interface SVGProps {
   size: number;
   color?: string;
@@ -14,15 +16,20 @@ export interface Position {
 }
 
 export interface WindowSettings {
-  isOpen: boolean;
   isTransitioning: boolean;
-  type: "close-window" | "minimize-window" | null;
+  type: "close-window" | "minimize-window" | "unminimize-window" | "fullscreen-window" | "initialize-window" | null;
   position: Position;
   size: Size;
   fullScreen: {
-    isTransitioning: boolean;
     isFullScreen: boolean;
     unMaximizedSize: Size;
     unMaximizedPosition: Position;
+  };
+  preMinimizeMeasurements: {
+    yTransform: number;
+    xTransform: number;
+    dockIconToWindowWidthRatio: number;
+    dockIconToWindowHeightRatio: number;
+    position: Position;
   };
 };

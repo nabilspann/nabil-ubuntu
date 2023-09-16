@@ -7,16 +7,19 @@ import {
   useState,
 } from "react";
 import { useDraggable, useDndMonitor } from "@dnd-kit/core";
-import TransitionComp from "../TransitionComp";
-import WindowClose from "../svgs/WindowClose";
-import WindowRestore from "../svgs/WindowRestore";
-import WindowMinimize from "../svgs/WindowMinimize";
+import TransitionComp from "../../TransitionComp";
+import WindowClose from "../../svgs/WindowClose";
+import WindowRestore from "../../svgs/WindowRestore";
+import WindowMinimize from "../../svgs/WindowMinimize";
 import ResizeWindowBox from "./ResizeWindowBox";
 import { WindowSettings } from "@/interfaces";
-import WindowMaximize from "../svgs/WindowMaximize";
+import WindowMaximize from "../../svgs/WindowMaximize";
 
 const CLOSE_WINDOW = "close-window";
 const MINIMIZE_WINDOW = "minimize-window";
+const UNMINIMIZE_WINDOW = "unminimize-window";
+const FULL_SCREEN = "fullscreen-window";
+const INITIALIZE = "initialize-window";
 
 interface Props {
   children: ReactNode;
@@ -29,7 +32,7 @@ interface Props {
   isMinimized: boolean;
   dockIconRect: DOMRect;
   getDraggedWindowRect: (windowRect: DOMRect | null) => void;
-  draggableScreenRect: { innerXPosition: number, innerYPosition: number, innerWidth: number, innerHeight: number},
+  draggableScreenRect: { innerWidth: number, innerHeight: number},
 };
 
 interface WindowResizers {
@@ -193,20 +196,17 @@ const DraggableWindow = ({
     `${RESIZABLE_BOX}-${location}-${name}`;
 
   // const { innerWidth, innerHeight } = window;
-  const { innerXPosition, innerYPosition, innerWidth, innerHeight } = draggableScreenRect;
+  const { innerWidth, innerHeight } = draggableScreenRect;
 
   const [windowSettings, setWindowSettings] = useState<WindowSettings>({
-    isOpen: true,
     isTransitioning: false,
     type: null,
     position: { x: innerWidth * 0.3, y: innerHeight * 0.1 },
     size: {
-      // width: innerWidth * 0.4,
-      width: innerWidth * 0.4,
-      height: innerHeight * 0.6,
+      width: 0,
+      height: 0,
     },
     fullScreen: {
-      isTransitioning: false,
       isFullScreen: false,
       unMaximizedSize: {
         width: innerWidth * 0.4,
@@ -215,6 +215,16 @@ const DraggableWindow = ({
       unMaximizedPosition: {
         x: innerWidth * 0.3,
         y: innerHeight * 0.1,
+      },
+    },
+    preMinimizeMeasurements: {
+      yTransform: 0,
+      xTransform: 0,
+      dockIconToWindowWidthRatio: 0,
+      dockIconToWindowHeightRatio: 0,
+      position: {
+        x: 0,
+        y: 0,
       },
     },
   });
@@ -228,7 +238,7 @@ const DraggableWindow = ({
   });
   const draggableWindowRef = useRef(null);
 
-  const componentPosition = node.current
+  const draggedWindowPosition = node.current
     ? node.current?.getBoundingClientRect()
     : null;
 
@@ -241,7 +251,7 @@ const DraggableWindow = ({
   useDndMonitor({
     onDragStart({ active: { id } }) {
       if (id.toString().includes(RESIZABLE_BOX)) {
-        getDraggedWindowRect(componentPosition);
+        getDraggedWindowRect(draggedWindowPosition);
       } else {
         getDraggedWindowRect(null);
       }
@@ -265,10 +275,17 @@ const DraggableWindow = ({
   });
 
   useEffect(() => {
-    if (!isMinimized) {
+    if (!isMinimized && windowSettings.type) {
       setWindowSettings((currentSettings) => ({
         ...currentSettings,
-        isOpen: true,
+        type: UNMINIMIZE_WINDOW,
+        isTransitioning: true,
+      }));
+    } else if(!windowSettings.type){
+      setWindowSettings((currentSettings) => ({
+        ...currentSettings,
+        type: INITIALIZE,
+        isTransitioning: true,
       }));
     }
   }, [isMinimized]);
@@ -277,60 +294,28 @@ const DraggableWindow = ({
     setWindowSettings(settings);
   };
 
-  const maximizeUnmaximize = () => {
-    if (!windowSettings.fullScreen.isFullScreen) {
-      console.log("not fullscreen", windowSettings.fullScreen);
-      setWindowSettings((currentSettings) => ({
-        ...currentSettings,
-        position: {
-          x: innerXPosition,
-          y: innerYPosition,
-        },
-        size: {
-          width: undefined,
-          height: undefined,
-        },
-        fullScreen: {
-          isTransitioning: true,
-          isFullScreen: true,
-          unMaximizedSize: { ...currentSettings.size },
-          unMaximizedPosition: { ...currentSettings.position },
-        },
-      }));
-    } else if (windowSettings.fullScreen.isFullScreen) {
-      console.log("fullscreen", windowSettings.fullScreen);
-      const currentSettings = { ...windowSettings };
-      currentSettings.fullScreen.isTransitioning = true;
-      currentSettings.fullScreen.isFullScreen = false;
-      currentSettings.size = { ...currentSettings.fullScreen.unMaximizedSize };
-      currentSettings.position = {
-        ...currentSettings.fullScreen.unMaximizedPosition,
-      };
-      setWindowSettings(currentSettings);
-    }
-
-    setTimeout(() => {
-      setWindowSettings((currentSettings) => ({
-        ...currentSettings,
-        fullScreen: {
-          ...currentSettings.fullScreen,
-          isTransitioning: false,
-        }
-      }));
-    }, 0);
-  };
-
   let yTransform = 0;
   let xTransform = 0;
   let dockIconToWindowWidthRatio = 0;
   let dockIconToWindowHeightRatio = 0;
-  if (componentPosition) {
-    yTransform = dockIconRect.top - componentPosition.top;
-    xTransform = dockIconRect.left - componentPosition.left;
-    dockIconToWindowWidthRatio = dockIconRect.width / componentPosition.width;
+  if (draggedWindowPosition) {
+    yTransform = dockIconRect.top - draggedWindowPosition.top;
+    xTransform = dockIconRect.left - draggedWindowPosition.left;
+    dockIconToWindowWidthRatio =
+      dockIconRect.width / draggedWindowPosition.width;
     dockIconToWindowHeightRatio =
-      dockIconRect.height / componentPosition.height;
+      dockIconRect.height / draggedWindowPosition.height;
   }
+
+  // console.log(
+  //   "measurements",
+  //   xTransform,
+  //   yTransform,
+  //   dockIconToWindowWidthRatio,
+  //   dockIconToWindowHeightRatio
+  // );
+  // console.log("dockicon", dockIconRect)
+  // console.log("component position", draggedWindowPosition)
 
   if (isMinimized) {
     return <></>;
@@ -345,99 +330,109 @@ const DraggableWindow = ({
     },
     [MINIMIZE_WINDOW]: {
       onEnter: () => {
+        // console.log("minimize window", node.current?.getBoundingClientRect());
         const windowWidth = windowSettings.size.width || innerWidth;
         const windowHeight = windowSettings.size.height || innerHeight;
-
         setAnimatedStyles({
-          // opacity: "0.5",
+          opacity: "0.2",
           transform: `translate(${
             xTransform - (windowWidth / 2) * (1 - dockIconToWindowWidthRatio)
           }px, ${
             yTransform - (windowHeight / 2) * (1 - dockIconToWindowHeightRatio)
           }px) scale(${dockIconToWindowWidthRatio}, ${dockIconToWindowHeightRatio})`,
-          transition: "all 250ms",
+          transition: "all 250ms linear",
         });
       },
       onEntered: () => {
         minimizeWindow();
       },
     },
+    [UNMINIMIZE_WINDOW]: {
+      onEnter: () => {
+        setAnimatedStyles({
+          opacity: "1",
+          transform: "scale(1)",
+          transition: "all 250ms linear",
+        });
+      },
+      onEntered: () => {
+        setAnimatedStyles({});
+      },
+    },
+    [FULL_SCREEN]: {
+      onEnter: () => {
+         if (!windowSettings.fullScreen.isFullScreen) {
+           setWindowSettings((currentSettings) => ({
+             ...currentSettings,
+             position: {
+               x: 0,
+               y: 0,
+             },
+             size: {
+               width: draggableScreenRect.innerWidth,
+               height: draggableScreenRect.innerHeight,
+             },
+             fullScreen: {
+               isTransitioning: true,
+               isFullScreen: true,
+               unMaximizedSize: { ...currentSettings.size },
+               unMaximizedPosition: { ...currentSettings.position },
+             },
+           }));
+         } else if (windowSettings.fullScreen.isFullScreen) {
+           setWindowSettings((currentSettings) => ({
+            ...currentSettings,
+            size: { ...currentSettings.fullScreen.unMaximizedSize },
+            position: { ...currentSettings.fullScreen.unMaximizedPosition },
+            fullScreen: {
+              ...currentSettings.fullScreen,
+              isFullScreen: false,
+            }
+           }));
+         }
+      },
+      onEntered: () => {},
+    },
+    [INITIALIZE]: {
+      onEnter: () => {
+         setWindowSettings((currentSettings) => ({
+           ...currentSettings,
+           size: {
+            width: innerWidth * 0.4,
+            height: innerHeight * 0.6,
+          },
+         }));
+      },
+      onEntered: () => {}
+    },
   };
 
   setNodeRef(draggableWindowRef.current);
   return (
     <TransitionComp
-      // in={windowSettings.isOpen}
       in={windowSettings.isTransitioning}
       nodeRef={draggableWindowRef}
       timeout={500}
       onEnter={() => {
-        console.log("entering!!")
-        // const windowWidth = windowSettings.size.width || innerWidth;
-        // const windowHeight = windowSettings.size.height || innerHeight;
-        // setAnimatedStyles({
-        //   // opacity: "1",
-        //   transform: `translate(
-        //   ${(windowWidth / 2) * dockIconToWindowWidthRatio - xTransform}px,
-        //   ${(windowHeight / 2) * dockIconToWindowHeightRatio - yTransform}px)
-        //   scale(1)`,
-        //   transition: "all 250ms",
-        // });
         if (windowSettings.type) {
           transitions[windowSettings.type].onEnter();
         }
       }}
       onEntered={() => {
-        if(windowSettings.type){
+        if (windowSettings.type) {
           transitions[windowSettings.type].onEntered();
         }
         setWindowSettings((currentSettings) => ({
           ...currentSettings,
           isTransitioning: false,
-        }))
-        setAnimatedStyles({});
-      }}
-      onExit={() => {
-        if (windowSettings.type === MINIMIZE_WINDOW) {
-          const windowWidth = windowSettings.size.width || innerWidth;
-          const windowHeight = windowSettings.size.height || innerHeight;
-
-          setAnimatedStyles({
-            // opacity: "0.5",
-            transform: `translate(${
-              xTransform - (windowWidth / 2) * (1 - dockIconToWindowWidthRatio)
-            }px, ${
-              yTransform -
-              (windowHeight / 2) * (1 - dockIconToWindowHeightRatio)
-            }px) scale(${dockIconToWindowWidthRatio}, ${dockIconToWindowHeightRatio})`,
-            transition: "all 250ms",
-          });
-        }
-      }}
-      onExited={() => {
-        // console.log("onExited");
-        if (windowSettings.type === CLOSE_WINDOW) {
-          closeWindow();
-        } else if (windowSettings.type === MINIMIZE_WINDOW) {
-          // setAnimatedStyles({});
-          minimizeWindow();
-        }
+        }));
       }}
       classNames={windowSettings.type}
       exit={false}
-      // unmountOnExit
     >
       <div
         ref={draggableWindowRef}
-        // className={`absolute ${
-        //   windowSettings.fullScreen.isFullScreen ? "w-full h-full" : ""
-        // }`}
-        className={`absolute ${windowSettings.fullScreen.isTransitioning ? "transition-all duration-200" : ""} ${
-          windowSettings.fullScreen.isFullScreen
-            ? "h-full w-full"
-            : ""
-        }`}
-        // className="absolute"
+        className="absolute"
         style={{
           // width: "40%",
           width: windowSettings.size.width,
@@ -449,6 +444,7 @@ const DraggableWindow = ({
           ...transformStyles,
           ...animatedStyles,
         }}
+        onFocus={focusWindow}
         {...listeners}
         {...attributes}
       >
@@ -469,8 +465,9 @@ const DraggableWindow = ({
           </>
         )}
         <div
-          onFocus={focusWindow}
-          className="flex flex-col h-full w-full border-black border-2 rounded-xl overflow-hidden"
+          className={`flex flex-col h-full w-full border-black border-2 ${
+            windowSettings.fullScreen.isFullScreen ? "" : "rounded-xl"
+          } overflow-hidden`}
         >
           <div className="bg-ubuntu-dark-2 h-14 flex flex-row w-full">
             <div className="w-full">{topBarChildren}</div>
@@ -482,14 +479,22 @@ const DraggableWindow = ({
                     setWindowSettings((currentSettings) => ({
                       ...currentSettings,
                       isTransitioning: true,
-                      isOpen: false,
                       type: MINIMIZE_WINDOW,
                     }));
                   }}
                 >
                   <WindowMinimize size={20} />
                 </li>
-                <li className={iconListClass} onClick={maximizeUnmaximize}>
+                <li
+                  className={iconListClass}
+                  onClick={() => {
+                    setWindowSettings((currentSettings) => ({
+                      ...currentSettings,
+                      isTransitioning: true,
+                      type: FULL_SCREEN,
+                    }));
+                  }}
+                >
                   {windowSettings.fullScreen.isFullScreen ? (
                     <WindowMaximize size={20} color="#fff" />
                   ) : (
@@ -502,7 +507,6 @@ const DraggableWindow = ({
                     setWindowSettings((currentSettings) => ({
                       ...currentSettings,
                       isTransitioning: true,
-                      isOpen: false,
                       type: CLOSE_WINDOW,
                     }));
                   }}
