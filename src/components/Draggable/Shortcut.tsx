@@ -1,29 +1,40 @@
 'use client';
-import { useDraggable } from "@dnd-kit/core";
+import { UniqueIdentifier } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { ReactNode } from "react";
 
-const Shortcut = () => {
-    const { attributes, listeners, setNodeRef, transform } = useDraggable(
+interface Props {
+    children?: ReactNode;
+    id: UniqueIdentifier;
+    className: string;
+    handleClick?: () => void;
+};
+
+const Shortcut = ({children, id, className, handleClick = () => {}}: Props) => {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable(
       {
-        id: "short cut id",
+        id,
+        disabled: id.toString().includes("disabled") ? true : false,
       }
     );
 
-    const transformStyles = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        }
-    : undefined;
+    const transformStyles = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
 
     return (
-        <div
-            className="absolute"
-            ref={setNodeRef}
-            style={{...transformStyles}}
-            {...listeners}
-            {...attributes}
-        >
-            SHORTCUTS
-        </div>
+      <div
+        className={className}
+        ref={setNodeRef}
+        style={{ ...transformStyles }}
+        onClick={handleClick}
+        {...listeners}
+        {...attributes}
+      >
+        {children}
+      </div>
     );
 };
 

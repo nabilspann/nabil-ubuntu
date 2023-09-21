@@ -1,63 +1,28 @@
 'use client';
-import { useContext, useState, useRef } from "react";
+import { useContext, useRef } from "react";
 import {
   DndContext,
   useSensors,
   useSensor,
   PointerSensor,
   Modifier,
-  ClientRect,
 } from "@dnd-kit/core";
 import {
   restrictToWindowEdges,
 } from "@dnd-kit/modifiers";
-import type { Transform } from "@dnd-kit/utilities";
 import { Context } from "../ContextProvider";
 import DraggableWindow from "./window/DraggableWindow";
-import Shortcut from "./Shortcut";
-
-const restrictToBoundingRect = (
-  transform: Transform,
-  rect: ClientRect,
-  boundingRect: ClientRect
-): Transform => {
-  const value = {
-    ...transform,
-  };
-  if (rect.top + transform.y <= boundingRect.top) {
-    value.y = boundingRect.top - rect.top;
-  } else if (
-    rect.bottom + transform.y >=
-    boundingRect.top + boundingRect.height
-  ) {
-    value.y = boundingRect.top + boundingRect.height - rect.bottom;
-  }
-
-  if (rect.left + transform.x <= boundingRect.left) {
-    value.x = boundingRect.left - rect.left;
-  } else if (
-    rect.right + transform.x >=
-    boundingRect.left + boundingRect.width
-  ) {
-    value.x = boundingRect.left + boundingRect.width - rect.right;
-  }
-  return value;
-}
+import { restrictToBoundingRect } from "@/utilFunctions";
 
 const DisplayWindows = () => {
   const {windows, focusWindow, closeWindow, minimizeWindow} = useContext(Context);
-  const [draggedWindowRect, setDraggedWindowRect] = useState<DOMRect | null>(null);
 
   const ref = useRef<HTMLDivElement>(null);
   const draggableScreenRect = ref.current?.getBoundingClientRect();
   console.log("draggableScreenRect", draggableScreenRect);
   const formattedScreenRect = {
-    innerWidth: draggableScreenRect?.width || window.innerWidth,
-    innerHeight: draggableScreenRect?.height || window.innerHeight,
-  };
-
-  const getDraggedWindowRect = (windowRect: DOMRect | null) =>{
-    setDraggedWindowRect(windowRect);
+    innerWidth: draggableScreenRect?.width || 0,
+    innerHeight: draggableScreenRect?.height || 0,
   };
 
   const restrictToDivWrapper: Modifier = ({
@@ -84,10 +49,8 @@ const DisplayWindows = () => {
 
   return (
     <div
-      // ref={drop}
       ref={ref}
-      className="h-[calc(100%-40px)] w-full bottom-0 absolute"
-      // style={{overflow: "hidden", overscrollBehavior: "none"}}
+      className={`h-[calc(100%-theme(spacing.10))] w-full bottom-0 absolute`}
     >
       <DndContext
         sensors={sensors}
@@ -105,7 +68,7 @@ const DisplayWindows = () => {
             minimizeWindow={() => minimizeWindow(index)}
             topBarChildren={window.topBarComp}
             dockIconRect={window.dockIconRect}
-            getDraggedWindowRect={getDraggedWindowRect}
+            // getDraggedWindowRect={getDraggedWindowRect}
             draggableScreenRect={formattedScreenRect}
           >
             {window.wrappedComp}

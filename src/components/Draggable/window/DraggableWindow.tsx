@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import { useDraggable, useDndMonitor } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import TransitionComp from "../../TransitionComp";
 import WindowClose from "../../svgs/WindowClose";
 import WindowRestore from "../../svgs/WindowRestore";
@@ -31,7 +32,7 @@ interface Props {
   name: string;
   isMinimized: boolean;
   dockIconRect: DOMRect;
-  getDraggedWindowRect: (windowRect: DOMRect | null) => void;
+  // getDraggedWindowRect: (windowRect: DOMRect | null) => void;
   draggableScreenRect: { innerWidth: number, innerHeight: number},
 };
 
@@ -187,7 +188,7 @@ const DraggableWindow = ({
   minimizeWindow,
   isMinimized,
   dockIconRect,
-  getDraggedWindowRect,
+  // getDraggedWindowRect,
   draggableScreenRect,
 }: Props) => {
   const windowId = `draggable-${name}`;
@@ -242,21 +243,12 @@ const DraggableWindow = ({
     ? node.current?.getBoundingClientRect()
     : null;
 
-  const transformStyles = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      }
-    : undefined;
+  const transformStyles = {
+    transform: CSS.Transform.toString(transform),
+  };
 
   useDndMonitor({
-    onDragStart({ active: { id } }) {
-      if (id.toString().includes(RESIZABLE_BOX)) {
-        getDraggedWindowRect(draggedWindowPosition);
-      } else {
-        getDraggedWindowRect(null);
-      }
-    },
-    onDragEnd({ delta, active: { id }, ...rest }) {
+    onDragEnd({ delta, active: { id } }) {
       if (windowId === id) {
         setWindowSettings((currentSettings) => {
           const {
@@ -366,12 +358,12 @@ const DraggableWindow = ({
              ...currentSettings,
              position: {
                x: 0,
-               y: 0,
+               y: -40,
              },
              size: {
-               width: draggableScreenRect.innerWidth,
-               height: draggableScreenRect.innerHeight,
-             },
+                width: draggableScreenRect.innerWidth,
+                height: draggableScreenRect.innerHeight + 40,
+              },
              fullScreen: {
                isTransitioning: true,
                isFullScreen: true,
@@ -465,7 +457,7 @@ const DraggableWindow = ({
           </>
         )}
         <div
-          className={`flex flex-col h-full w-full border-black border-2 ${
+          className={`flex flex-col h-full w-full  border-black border-2 ${
             windowSettings.fullScreen.isFullScreen ? "" : "rounded-xl"
           } overflow-hidden`}
         >

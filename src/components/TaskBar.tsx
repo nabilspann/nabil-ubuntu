@@ -10,8 +10,7 @@ const TaskBar = () => {
     const {openWindow} = useContext(Context);
     return (
       <div
-        //   className="flex flex-row absolute bottom-1.5 mx-auto w-fit inset-x-0 bg-ubuntu-dark-1 opacity-75 items-center border-2 border-ubuntu-gray-1 rounded-2xl"
-        className="flex flex-col absolute my-auto h-fit inset-y-0 bg-ubuntu-dark-1 opacity-75 items-center border-2 border-ubuntu-gray-1 rounded-2xl"
+        className={`flex flex-col absolute my-auto h-fit w-20 inset-y-0 bg-ubuntu-dark-1 opacity-75 items-center border-2 border-ubuntu-gray-1 rounded-2xl`}
       >
         <div>
           <TaskIconWrapper

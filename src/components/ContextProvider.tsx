@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useState, ReactNode, RefObject } from 'react'
+import { createContext, useState, ReactNode, RefObject, useRef } from 'react'
 
 
 interface Props {
@@ -32,7 +32,7 @@ interface ContextType {
     name: string,
     topBarComp: ReactNode,
     wrappedComp: ReactNode,
-    dockIconRect: DOMRect,
+    dockIconRect: DOMRect
   ) => void;
   focusWindow: (windowIndex: number) => void;
   closeWindow: (windowIndex: number) => void;
