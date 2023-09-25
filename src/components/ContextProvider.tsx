@@ -1,6 +1,6 @@
 'use client';
-import { createContext, useState, ReactNode, RefObject } from 'react'
-
+import { createContext, useState, ReactNode, RefObject } from 'react';
+import OpenableWindowsList from './WindowList';
 
 interface Props {
   children: ReactNode;
@@ -17,7 +17,17 @@ interface Window {
   name: string;
   zIndex: number;
   topBarComp: ReactNode;
-  wrappedComp: ReactNode;
+  wrappedBody: ReactNode;
+  isMinimized: boolean;
+  dockIconRect: DOMRect;
+}
+
+interface OpenableWindowsListType {
+  id: string;
+  topBarComp: ReactNode;
+  wrappedBody: ReactNode;
+  taskBarIconRef: RefObject<HTMLDivElement>;
+  icon: ReactNode;
 }
 
 interface ContextType {
@@ -26,13 +36,11 @@ interface ContextType {
   volume: number;
   changeVolume: (volume: number) => void;
   windows: Window[];
-  addWindow: (
-    name: string,
-    topBarComp: ReactNode,
-    wrappedComp: ReactNode
-  ) => void;
+  openWindow: (id: string) => void;
   focusWindow: (windowIndex: number) => void;
   closeWindow: (windowIndex: number) => void;
+  minimizeWindow: (windowIndex: number) => void;
+  openableWindows: OpenableWindowsListType[];
 }
 
 const defaultState = {
@@ -44,9 +52,12 @@ const defaultState = {
   changeMenu: () => {},
   changeVolume: () => {},
   windows: [],
-  addWindow: () => {},
+  openWindow: (id: string) => {},
   focusWindow: () => {},
   closeWindow: () => {},
+  minimizeWindow: () => {},
+  openableWindows: [],
+  shortcutIcons: [],
 };
 
 export const Context = createContext<ContextType>(defaultState);
@@ -55,6 +66,7 @@ export const ContextProvider = ({children}: Props) => {
     const [topBarDropDown, setTopBarDropDown] = useState<OpenedMenu>(defaultState.topBarDropDown);
     const [volume, setCurrentVolume ] = useState(defaultState.volume);
     const [windows, setWindows] = useState<Window[]>(defaultState.windows);
+    const openableWindows = OpenableWindowsList();
 
     const changeMenu = (setting: ChangeMenu) => {
         let openedMenu = setting;        
@@ -68,53 +80,59 @@ export const ContextProvider = ({children}: Props) => {
         setCurrentVolume(volume);
     }
 
-    const addWindow = (name: string, topBarComp: ReactNode, wrappedComp: ReactNode) => {
-      const windowIndex = windows.map(window => window.name).indexOf(name);
-      if(windowIndex === -1){
+    const openWindow = (id: string) => {
+      const openableWindow = openableWindows.find((window) => window.id === id);
+      const windowIndex = windows.map((window) => window.name).indexOf(id);
+      const dockIconRef = openableWindow?.taskBarIconRef.current;
+      if (
+        windowIndex === -1 &&
+        dockIconRef
+      ) {
+        const { topBarComp, wrappedBody, id: name } = openableWindow;
         setWindows((prevWindows) => [
           ...prevWindows,
-          { name,
-            zIndex: prevWindows.length + 1,
+          {
+            name,
+            zIndex: prevWindows.length + 2,
             topBarComp,
-            wrappedComp
+            wrappedBody,
+            isMinimized: false,
+            dockIconRect: dockIconRef.getBoundingClientRect(),
           },
         ]);
+      } else if (!!windows[windowIndex].isMinimized) {
+        const newWindow = [...windows];
+        newWindow[windowIndex].isMinimized = false;
+        setWindows(newWindow);
       }
-    }
+    };
 
     const focusWindow = (windowIndex: number) => {
       const currentZIndex = windows[windowIndex].zIndex;
       const windowsCopy = windows.map((window, index) => {
         //Puts the z-index of the focused window to the top
         if (windowIndex === index) {
-          return { ...window, zIndex: windows.length };
+          return { ...window, zIndex: windows.length * 2 };
         } else if (currentZIndex > window.zIndex) {
           return window;
         }
         //Make sure the z-indexes of rest of windows is below the focused window
         else {
-          return { ...window, zIndex: window.zIndex - 1 };
+          return { ...window, zIndex: window.zIndex - 2 };
         }
       });
       setWindows(windowsCopy);
-
-      // const windowsCopy = [ ...windows ];
-      // const getWindow = windowsCopy.splice(windowIndex, 1)[0];
-      // console.log("getWindow", getWindow);
-      // console.log("windowCopy", windowsCopy)
-      // windowsCopy.push(getWindow);
-      // setWindows(windowsCopy);
-      // setWindows(prevWindows => {
-      //   const windowsCopy = [...prevWindows];
-      //   const getWindow = windowsCopy.splice(windowIndex, 1)[0];
-      //   windowsCopy.push(getWindow);
-      //   return windowsCopy
-      // });
     }
 
     const closeWindow = (windowIndex: number) => {
       const windowsCopy = [ ...windows ];
       windowsCopy.splice(windowIndex, 1);
+      setWindows(windowsCopy);
+    }
+
+    const minimizeWindow = (windowIndex: number) => {
+      const windowsCopy = [...windows];
+      windowsCopy[windowIndex].isMinimized = true;
       setWindows(windowsCopy);
     }
 
@@ -126,9 +144,11 @@ export const ContextProvider = ({children}: Props) => {
           volume,
           changeVolume,
           windows,
-          addWindow,
+          openWindow,
           focusWindow,
           closeWindow,
+          minimizeWindow,
+          openableWindows,
         }}
       >
         {children}

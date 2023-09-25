@@ -1,0 +1,37 @@
+.drop-down-expand-enter {
+  transition: max-height 0.2s ease-in;
+  @apply max-h-0 overflow-hidden;
+}
+.drop-down-expand-enter-active {
+  @apply h-auto max-h-28;
+}
+.drop-down-expand-exit {
+  transition: max-height 0.2s ease-in;
+  @apply max-h-28;
+}
+.drop-down-expand-exit-active {
+  @apply max-h-0 overflow-hidden;
+}
+
+.close-window-enter{
+    opacity: 1;
+}
+
+.close-window-enter-active {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 200ms, transform 200ms;
+}
+
+.initialize-window-enter{
+  transform: scale(0.2);
+}
+
+.initialize-window-enter-active{
+  transform: scale(1);
+  transition: transform 200ms ease;
+}
+
+.fullscreen-window-enter {
+  transition: all 150ms linear;
+}

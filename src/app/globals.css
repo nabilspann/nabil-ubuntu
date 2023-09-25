@@ -28,21 +28,6 @@ body {
   overflow: hidden;
 }
 
-.drop-down-expand-enter {
-  transition: max-height 0.2s ease-in;
-  @apply max-h-0 overflow-hidden;
-}
-.drop-down-expand-enter-active {
-  @apply h-auto max-h-28;
-}
-.drop-down-expand-exit {
-  transition: max-height 0.2s ease-in;
-  @apply max-h-28;
-}
-.drop-down-expand-exit-active {
-  @apply max-h-0 overflow-hidden;
-}
-
 .volume-slider {
   -webkit-appearance: none;
   height: 4px;

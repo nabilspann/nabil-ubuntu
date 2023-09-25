@@ -1,12 +1,23 @@
-import { ReactNode } from "react";
+import { ReactNode, RefObject } from "react";
 
 interface Props {
   children: ReactNode;
   handleClick?: () => void;
+  iconRef?: RefObject<HTMLDivElement>;
 }
 
-const TaskIconWrapper = ({ children, handleClick = () => {} }: Props) => {
-    return <div className="p-3 hover:bg-gray-400 rounded-2xl" onClick={handleClick}>{children}</div>;
+const TaskIconWrapper = ({ children, handleClick = () => {}, iconRef }: Props) => {
+  return (
+    <div
+      ref={iconRef}
+      className="p-3 hover:bg-gray-400 rounded-2xl"
+      onClick={() => {
+        if (iconRef) handleClick();
+      }}
+    >
+      {children}
+    </div>
+  );
 };
 
 export default TaskIconWrapper;
