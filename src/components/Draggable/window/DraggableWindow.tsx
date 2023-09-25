@@ -32,7 +32,6 @@ interface Props {
   name: string;
   isMinimized: boolean;
   dockIconRect: DOMRect;
-  // getDraggedWindowRect: (windowRect: DOMRect | null) => void;
   draggableScreenRect: { innerWidth: number, innerHeight: number},
 };
 
@@ -188,7 +187,6 @@ const DraggableWindow = ({
   minimizeWindow,
   isMinimized,
   dockIconRect,
-  // getDraggedWindowRect,
   draggableScreenRect,
 }: Props) => {
   const windowId = `draggable-${name}`;
@@ -196,7 +194,6 @@ const DraggableWindow = ({
   const resizableBoxId = (location: string) =>
     `${RESIZABLE_BOX}-${location}-${name}`;
 
-  // const { innerWidth, innerHeight } = window;
   const { innerWidth, innerHeight } = draggableScreenRect;
 
   const [windowSettings, setWindowSettings] = useState<WindowSettings>({
@@ -229,9 +226,6 @@ const DraggableWindow = ({
       },
     },
   });
-
-  // console.log(" innerWidth", innerWidth);
-  // console.log(" innerHeight", innerHeight);
 
   const [animatedStyles, setAnimatedStyles] = useState<CSSProperties>({});
   const { attributes, listeners, setNodeRef, transform, node } = useDraggable({
@@ -297,17 +291,7 @@ const DraggableWindow = ({
       dockIconRect.width / draggedWindowPosition.width;
     dockIconToWindowHeightRatio =
       dockIconRect.height / draggedWindowPosition.height;
-  }
-
-  // console.log(
-  //   "measurements",
-  //   xTransform,
-  //   yTransform,
-  //   dockIconToWindowWidthRatio,
-  //   dockIconToWindowHeightRatio
-  // );
-  // console.log("dockicon", dockIconRect)
-  // console.log("component position", draggedWindowPosition)
+  };
 
   if (isMinimized) {
     return <></>;
@@ -322,7 +306,6 @@ const DraggableWindow = ({
     },
     [MINIMIZE_WINDOW]: {
       onEnter: () => {
-        // console.log("minimize window", node.current?.getBoundingClientRect());
         const windowWidth = windowSettings.size.width || innerWidth;
         const windowHeight = windowSettings.size.height || innerHeight;
         setAnimatedStyles({
@@ -426,13 +409,11 @@ const DraggableWindow = ({
         ref={draggableWindowRef}
         className="absolute"
         style={{
-          // width: "40%",
           width: windowSettings.size.width,
           height: windowSettings.size.height,
           zIndex,
           left: windowSettings.position.x,
           top: windowSettings.position.y,
-          // transform: windowSettings.transform,
           ...transformStyles,
           ...animatedStyles,
         }}

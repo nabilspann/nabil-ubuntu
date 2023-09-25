@@ -1,9 +1,5 @@
 'use client';
 import {
-  DragEventHandler,
-  MutableRefObject,
-  DragEvent,
-  MouseEvent as ReactMouseEvent,
   useState
 } from "react";
 import { useDndMonitor, useDraggable } from "@dnd-kit/core";
@@ -47,7 +43,6 @@ const ResizeWindowBox = ({zIndex, id, className, windowSettings, setWindowSettin
         currentSettings.size.width &&
         currentSettings.size.height
       ) {
-        console.log("transform", transform);
         setWindowSettings({
           ...currentSettings,
           size: {
@@ -58,15 +53,11 @@ const ResizeWindowBox = ({zIndex, id, className, windowSettings, setWindowSettin
             x: currentSettings.position.x + transform.x * positionDeltaX,
             y: currentSettings.position.y + transform.y * positionDeltaY,
           },
-          // transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
         });
       }
     },
   });
 
-  // console.log("attributes", active);
-  // console.log("node", node.current?.getBoundingClientRect())
-  // console.log("transform", transform)
   return (
     <div
       ref={setNodeRef}
@@ -74,8 +65,6 @@ const ResizeWindowBox = ({zIndex, id, className, windowSettings, setWindowSettin
       style={{
         zIndex,
       }}
-      // onMouseDown={mouseDownHandler}
-      // onMouseDown={(e) => onMouseDown(e, onMouseMove, 1, 1, 0, 0)}
       {...listeners}
       {...attributes}
     />

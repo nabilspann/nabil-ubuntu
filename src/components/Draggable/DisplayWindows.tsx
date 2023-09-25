@@ -19,7 +19,6 @@ const DisplayWindows = () => {
 
   const ref = useRef<HTMLDivElement>(null);
   const draggableScreenRect = ref.current?.getBoundingClientRect();
-  console.log("draggableScreenRect", draggableScreenRect);
   const formattedScreenRect = {
     innerWidth: draggableScreenRect?.width || 0,
     innerHeight: draggableScreenRect?.height || 0,
@@ -62,22 +61,17 @@ const DisplayWindows = () => {
             zIndex={window.zIndex}
             name={window.name}
             isMinimized={window.isMinimized}
-            // index={index}
             focusWindow={() => focusWindow(index)}
             closeWindow={() => closeWindow(index)}
             minimizeWindow={() => minimizeWindow(index)}
             topBarChildren={window.topBarComp}
             dockIconRect={window.dockIconRect}
-            // getDraggedWindowRect={getDraggedWindowRect}
             draggableScreenRect={formattedScreenRect}
           >
-            {window.wrappedComp}
+            {window.wrappedBody}
           </DraggableWindow>
         ))}
       </DndContext>
-      {/* <DndContext>
-        <Shortcut />
-      </DndContext> */}
     </div>
   );
 };
