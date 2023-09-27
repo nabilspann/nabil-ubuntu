@@ -64,7 +64,7 @@ const SideResizers = ({
       windowSettings={windowSettings}
       setWindowSettings={setWindowSettings}
       // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, 0, 0, 0)}
-      className="h-full w-3 absolute right-0 cursor-ew-resize"
+      className="h-full w-3 px-1 absolute right-0 cursor-ew-resize"
     />
     <ResizeWindowBox
       zIndex={zIndex + 1}
@@ -78,7 +78,7 @@ const SideResizers = ({
       windowSettings={windowSettings}
       setWindowSettings={setWindowSettings}
       // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, 0, 1, 0)}
-      className="h-full w-3 absolute left-0 cursor-ew-resize"
+      className="h-full w-3 px-1 absolute left-0 cursor-ew-resize"
     />
     <ResizeWindowBox
       zIndex={zIndex + 1}
@@ -106,7 +106,7 @@ const SideResizers = ({
       windowSettings={windowSettings}
       setWindowSettings={setWindowSettings}
       // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 0, 1, 0, 0)}
-      className="w-full h-3 absolute bottom-0 cursor-ns-resize"
+      className="w-full h-3 py-3 absolute bottom-0 cursor-ns-resize"
     />
   </>
 );
@@ -129,8 +129,7 @@ const CornerResizers = ({
       }}
       windowSettings={windowSettings}
       setWindowSettings={setWindowSettings}
-      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, 1, 0, 0)}
-      className="h-1 w-1 p-2 absolute bottom-0 right-0 cursor-nwse-resize"
+      className="h-3 w-3 p-4 absolute bottom-0 right-0 cursor-nwse-resize"
     />
     <ResizeWindowBox
       zIndex={zIndex + 1}
@@ -143,7 +142,6 @@ const CornerResizers = ({
       }}
       windowSettings={windowSettings}
       setWindowSettings={setWindowSettings}
-      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, -1, 1, 1)}
       className="h-1 w-1 p-2 absolute top-0 left-0 cursor-nwse-resize"
     />
     <ResizeWindowBox
@@ -157,8 +155,7 @@ const CornerResizers = ({
       }}
       windowSettings={windowSettings}
       setWindowSettings={setWindowSettings}
-      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, -1, 1, 1, 0)}
-      className="h-1 w-1 p-2 absolute bottom-0 left-0 cursor-nesw-resize"
+      className="h-3 w-3 p-4 absolute bottom-0 left-0 cursor-nesw-resize"
     />
     <ResizeWindowBox
       zIndex={zIndex + 1}
@@ -171,7 +168,6 @@ const CornerResizers = ({
       }}
       windowSettings={windowSettings}
       setWindowSettings={setWindowSettings}
-      // mouseDownHandler={(e) => onMouseDown(e, onMouseMove, 1, -1, 0, 1)}
       className="h-1 w-1 p-2 absolute top-0 right-0 cursor-nesw-resize"
     />
   </>
@@ -418,7 +414,6 @@ const DraggableWindow = ({
           ...animatedStyles,
         }}
         onFocus={focusWindow}
-        {...listeners}
         {...attributes}
       >
         {!windowSettings.fullScreen.isFullScreen && (
@@ -443,7 +438,9 @@ const DraggableWindow = ({
           } overflow-hidden`}
         >
           <div className="bg-ubuntu-dark-2 h-14 flex flex-row w-full">
-            <div className="w-full">{topBarChildren}</div>
+            <div className="w-full" {...listeners} {...attributes}>
+              {topBarChildren}
+            </div>
             <div className="w-1/4">
               <ul className="flex flex-row w-fit float-right items-center h-full">
                 <li

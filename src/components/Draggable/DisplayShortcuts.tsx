@@ -192,7 +192,6 @@ const DisplayShortcuts = () => {
                 className={`flex flex-col items-center justify-center ${
                   id.toString().includes("disabled") ? "cursor-default" : ""
                 }`}
-                // handleClick={handleClick}
                 handleClick={() => {
                   if (!id.toString().includes("disabled"))
                     openWindow(id.toString());

@@ -2,6 +2,7 @@ import TopBar from "@/components/TopBar";
 import TaskBar from "@/components/TaskBar";
 import DisplayWindows from "@/components/Draggable/DisplayWindows";
 import DisplayShortcuts from "@/components/Draggable/DisplayShortcuts";
+// import Resume from "@/components/Resume";
 
 const Desktop = () => {
     return (
@@ -10,6 +11,7 @@ const Desktop = () => {
         <DisplayWindows />
         <DisplayShortcuts />
         <TaskBar />
+        {/* <Resume /> */}
       </div>
     );
 }

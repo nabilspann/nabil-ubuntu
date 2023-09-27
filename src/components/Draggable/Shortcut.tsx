@@ -32,6 +32,7 @@ const Shortcut = ({children, id, className, handleClick = () => {}}: Props) => {
         onClick={handleClick}
         {...listeners}
         {...attributes}
+        tabIndex={id.toString().includes("disabled") ? -1 : 0}
       >
         {children}
       </div>
