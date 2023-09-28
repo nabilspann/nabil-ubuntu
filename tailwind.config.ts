@@ -18,6 +18,7 @@ const config: Config = {
         "ubuntu-dark-1": "#1d1d1d",
         "ubuntu-dark-2": "#131313",
         "ubuntu-dark-3": "#35363a",
+        "ubuntu-dark-4": "#202124",
         "ubuntu-gray-1": "#464646",
         "ubuntu-gray-2": "#898989",
         "ubuntu-gray-3": "#343434",

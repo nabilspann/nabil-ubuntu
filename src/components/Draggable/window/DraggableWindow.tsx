@@ -486,7 +486,7 @@ const DraggableWindow = ({
               </ul>
             </div>
           </div>
-          <div className="w-full h-full">{children}</div>
+          {children}
         </div>
       </div>
     </TransitionComp>
