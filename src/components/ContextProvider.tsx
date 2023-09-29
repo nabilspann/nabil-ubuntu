@@ -27,7 +27,7 @@ interface OpenableWindowsListType {
   topBarComp: ReactNode;
   wrappedBody: ReactNode;
   taskBarIconRef: RefObject<HTMLDivElement>;
-  icon: ReactNode;
+  icon: (size?: number) => ReactNode;
 }
 
 interface ContextType {
@@ -41,6 +41,8 @@ interface ContextType {
   closeWindow: (windowIndex: number) => void;
   minimizeWindow: (windowIndex: number) => void;
   openableWindows: OpenableWindowsListType[];
+  isShowApplicationsOpen: boolean;
+  setIsShowApplicationsOpen: (isOpen: boolean) => void;
 }
 
 const defaultState = {
@@ -58,6 +60,8 @@ const defaultState = {
   minimizeWindow: () => {},
   openableWindows: [],
   shortcutIcons: [],
+  isShowApplicationsOpen: false,
+  setIsShowApplicationsOpen: (isOpen: boolean) => {},
 };
 
 export const Context = createContext<ContextType>(defaultState);
@@ -66,6 +70,8 @@ export const ContextProvider = ({children}: Props) => {
     const [topBarDropDown, setTopBarDropDown] = useState<OpenedMenu>(defaultState.topBarDropDown);
     const [volume, setCurrentVolume ] = useState(defaultState.volume);
     const [windows, setWindows] = useState<Window[]>(defaultState.windows);
+    const [isShowApplicationsOpen, setIsShowApplicationsOpen] =
+      useState(defaultState.isShowApplicationsOpen);
     const openableWindows = OpenableWindowsList();
 
     const changeMenu = (setting: ChangeMenu) => {
@@ -84,6 +90,7 @@ export const ContextProvider = ({children}: Props) => {
       const openableWindow = openableWindows.find((window) => window.id === id);
       const windowIndex = windows.map((window) => window.name).indexOf(id);
       const dockIconRef = openableWindow?.taskBarIconRef.current;
+      setIsShowApplicationsOpen(false);
       if (
         windowIndex === -1 &&
         dockIconRef
@@ -149,6 +156,8 @@ export const ContextProvider = ({children}: Props) => {
           closeWindow,
           minimizeWindow,
           openableWindows,
+          isShowApplicationsOpen,
+          setIsShowApplicationsOpen
         }}
       >
         {children}

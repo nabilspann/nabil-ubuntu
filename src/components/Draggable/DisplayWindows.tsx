@@ -49,7 +49,7 @@ const DisplayWindows = () => {
   return (
     <div
       ref={ref}
-      className={`h-[calc(100%-theme(spacing.10))] w-full bottom-0 absolute`}
+      className={`h-full w-full absolute`}
     >
       <DndContext
         sensors={sensors}

@@ -121,7 +121,7 @@ const DisplayShortcuts = () => {
         id,
         children: (
           <>
-            {icon}
+            {icon()}
             <div className="text-center">{id}</div>
           </>
         ),
@@ -160,7 +160,7 @@ const DisplayShortcuts = () => {
 
   return (
     <div
-      className={`h-[calc(100%-theme(spacing.10))] w-[calc(100%-theme(spacing.20))] right-0 bottom-0 absolute flex flex-col items-center justify-center`}
+      className={`h-full w-[calc(100%-theme(spacing.20))] right-0 bottom-0 absolute flex flex-col items-center justify-center`}
       ref={outerDivRef}
     >
       <div

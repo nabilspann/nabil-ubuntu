@@ -3,12 +3,12 @@ import { useRef } from "react";
 import Image from "next/image";
 import documentViewer from "../../public/images/document-viewer.png";
 import ChromeIcon from "./svgs/ChromeIcon";
-import ChromeWindow from "./ChromeWindow";
+import ChromeWindow from "./Draggable/window/ChromeWindow";
 
 const OpenableWindowsList = () => {
     return [
       {
-        id: "Document viewer",
+        id: "Document Viewer",
         topBarComp: (
           <div className="flex items-center mx-auto w-fit h-full">
             Nabil&apos;s Resume
@@ -25,33 +25,33 @@ const OpenableWindowsList = () => {
           </div>
         ),
         taskBarIconRef: useRef<HTMLDivElement>(null),
-        icon: (
+        icon: (size = 50) => (
           <>
             <Image
               src={documentViewer}
               alt="document viewer"
-              width={50}
-              height={50}
+              width={size}
+              height={size}
             />
           </>
         ),
       },
       {
-        id: "Google chrome",
+        id: "Google Chrome",
         topBarComp: (
           <div className="flex items-center mx-auto w-fit h-full">
             Google Chrome
           </div>
         ),
         wrappedBody: (
-          <div className="w-full h-full ">
+          <div className="w-full h-full">
             <ChromeWindow />
           </div>
         ),
         taskBarIconRef: useRef<HTMLDivElement>(null),
-        icon: (
+        icon: (size = 50) => (
           <>
-            <ChromeIcon />
+            <ChromeIcon size={size}/>
           </>
         ),
       },

@@ -1,9 +1,8 @@
 'use client';
 import { useState, ChangeEvent } from "react";
-import Home from "./svgs/Home";
-import Reload from "./svgs/Reload";
-import ChromeGray from "./svgs/ChromeGray";
-import Search from "./svgs/Search";
+import Home from "../../svgs/Home";
+import Reload from "../../svgs/Reload";
+import Search from "../../svgs/Search";
 
 const ChromeWindow = () => {
   const [url, setUrl] = useState("google.com");
