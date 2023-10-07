@@ -44,9 +44,9 @@ const OpenableWindowsList = () => {
           </div>
         ),
         wrappedBody: (
-          <div className="w-full h-full">
+          <>
             <ChromeWindow />
-          </div>
+          </>
         ),
         taskBarIconRef: useRef<HTMLDivElement>(null),
         icon: (size = 50) => (

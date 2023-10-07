@@ -43,6 +43,8 @@ interface ContextType {
   openableWindows: OpenableWindowsListType[];
   isShowApplicationsOpen: boolean;
   setIsShowApplicationsOpen: (isOpen: boolean) => void;
+  triggerApplicationsEvent: boolean;
+  setTriggerApplicationsEvent: (isOpen: boolean) => void;
 }
 
 const defaultState = {
@@ -62,6 +64,8 @@ const defaultState = {
   shortcutIcons: [],
   isShowApplicationsOpen: false,
   setIsShowApplicationsOpen: (isOpen: boolean) => {},
+  triggerApplicationsEvent: false,
+  setTriggerApplicationsEvent: (isOpen: boolean) => {},
 };
 
 export const Context = createContext<ContextType>(defaultState);
@@ -70,6 +74,7 @@ export const ContextProvider = ({children}: Props) => {
     const [topBarDropDown, setTopBarDropDown] = useState<OpenedMenu>(defaultState.topBarDropDown);
     const [volume, setCurrentVolume ] = useState(defaultState.volume);
     const [windows, setWindows] = useState<Window[]>(defaultState.windows);
+    const [triggerApplicationsEvent, setTriggerApplicationsEvent] = useState(defaultState.triggerApplicationsEvent)
     const [isShowApplicationsOpen, setIsShowApplicationsOpen] =
       useState(defaultState.isShowApplicationsOpen);
     const openableWindows = OpenableWindowsList();
@@ -157,7 +162,9 @@ export const ContextProvider = ({children}: Props) => {
           minimizeWindow,
           openableWindows,
           isShowApplicationsOpen,
-          setIsShowApplicationsOpen
+          setIsShowApplicationsOpen,
+          triggerApplicationsEvent,
+          setTriggerApplicationsEvent,
         }}
       >
         {children}

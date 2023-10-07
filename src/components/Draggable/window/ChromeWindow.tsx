@@ -28,7 +28,7 @@ const ChromeWindow = () => {
   }
 
   return (
-    <>
+    <div className="flex flex-col w-full h-full">
       <div className="h-10 bg-ubuntu-dark-3 cursor-default flex items-center">
         <span className="px-3 text-center m-auto">
           <Reload size={18} />
@@ -53,13 +53,11 @@ const ChromeWindow = () => {
       </div>
       <iframe
         src="https://www.google.com/webhp?igu=1"
-        className="bg-ubuntu-dark-4"
+        className="bg-ubuntu-dark-4 h-full w-full"
         key={refreshKey}
         title="Google"
-        height={"100%"}
-        width={"100%"}
       ></iframe>
-    </>
+    </div>
   );
 };
 
