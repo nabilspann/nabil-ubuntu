@@ -15,14 +15,12 @@ const OpenableWindowsList = () => {
           </div>
         ),
         wrappedBody: (
-          <div className="h-full w-full">
-            <iframe
-              src="./Nabil_Resume.pdf"
-              title="resume"
-              height={"100%"}
-              width={"100%"}
-            ></iframe>
-          </div>
+          <iframe
+            src="./Nabil_Resume.pdf"
+            title="resume"
+            height={"100%"}
+            width={"100%"}
+          ></iframe>
         ),
         taskBarIconRef: useRef<HTMLDivElement>(null),
         icon: (size = 50) => (

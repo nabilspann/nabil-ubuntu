@@ -224,7 +224,7 @@ const DraggableWindow = ({
   });
 
   const [animatedStyles, setAnimatedStyles] = useState<CSSProperties>({});
-  const { attributes, listeners, setNodeRef, transform, node } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform, node, isDragging } = useDraggable({
     id: windowId,
   });
   const draggableWindowRef = useRef(null);
@@ -486,7 +486,7 @@ const DraggableWindow = ({
               </ul>
             </div>
           </div>
-          {children}
+          <div className="h-full w-full" style={{pointerEvents: isDragging ? "none" : "auto"}}>{children}</div>
         </div>
       </div>
     </TransitionComp>
