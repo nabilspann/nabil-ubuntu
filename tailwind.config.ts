@@ -13,6 +13,8 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         jellyfish: "url('../../public/images/jellyfish.png')",
+        kudu: "url('../../public/images/ubuntu-kudu-wallpaper.jpg')",
+        maroonBells: "url('../../public/images/maroon-bells.jpg')",
       },
       colors: {
         "ubuntu-dark-1": "#1d1d1d",
@@ -24,6 +26,12 @@ const config: Config = {
         "ubuntu-gray-2": "#898989",
         "ubuntu-gray-3": "#343434",
         "ubuntu-blue-1": "#0073e5",
+      },
+      minWidth: {
+        "background-image": "250px",
+      },
+      minHeight: {
+        "background-image": "125px",
       },
     },
   },

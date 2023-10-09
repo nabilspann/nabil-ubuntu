@@ -8,7 +8,7 @@ const TaskBar = () => {
     const { openWindow, openableWindows, isShowApplicationsOpen, setIsShowApplicationsOpen } = useContext(Context);
     return (
       <div
-        className={`flex flex-col absolute my-auto h-fit w-20 inset-y-0 bg-ubuntu-dark-1 opacity-75 items-center border-2 border-ubuntu-gray-1 rounded-2xl justify-center ${
+        className={`flex flex-col absolute my-auto h-fit w-20 inset-y-0 bg-ubuntu-dark-1/75 items-center border-2 border-ubuntu-gray-1 rounded-2xl justify-center ${
           isShowApplicationsOpen ? "z-50" : ""
         }`}
       >

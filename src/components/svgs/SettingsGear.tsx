@@ -1,5 +1,3 @@
-import * as React from "react";
-
 interface Props {
   size?: number;
 }
@@ -10,10 +8,10 @@ const SettingsGear = ({ size = 60 }: Props) => (
     xmlnsXlink="http://www.w3.org/1999/xlink"
     width={size}
     height={size}
-    viewBox="20 28 256 256"
     style={{
       display: "inline",
     }}
+    viewBox="24 28 256 256"
   >
     <title>{"Yaru Icon Theme Template"}</title>
     <defs>
@@ -226,13 +224,31 @@ const SettingsGear = ({ size = 60 }: Props) => (
           }}
         />
       </linearGradient>
-      <filter id="f" width={1.096} height={1.096} x={-0.048} y={-0.048}>
+      <filter
+        id="f"
+        width={1.096}
+        height={1.096}
+        x={-0.048}
+        y={-0.048}
+      >
         <feGaussianBlur stdDeviation={4.48} />
       </filter>
-      <filter id="e" width={1.024} height={1.024} x={-0.012} y={-0.012}>
+      <filter
+        id="e"
+        width={1.024}
+        height={1.024}
+        x={-0.012}
+        y={-0.012}
+      >
         <feGaussianBlur stdDeviation={1.12} />
       </filter>
-      <filter id="m" width={1.048} height={1.048} x={-0.024} y={-0.024}>
+      <filter
+        id="m"
+        width={1.048}
+        height={1.048}
+        x={-0.024}
+        y={-0.024}
+      >
         <feGaussianBlur stdDeviation={1.5} />
       </filter>
       <radialGradient
@@ -250,15 +266,12 @@ const SettingsGear = ({ size = 60 }: Props) => (
     <g
       style={{
         display: "inline",
-        overflow: "hidden",
       }}
-      fill="white"
     >
       <g
         style={{
           display: "inline",
         }}
-        fill="white"
       >
         <circle
           cx={152}
@@ -276,7 +289,6 @@ const SettingsGear = ({ size = 60 }: Props) => (
             strokeMiterlimit: 4,
             strokeDasharray: "none",
             strokeOpacity: 1,
-            filter: "url(#e)",
           }}
         />
         <circle
@@ -295,7 +307,6 @@ const SettingsGear = ({ size = 60 }: Props) => (
             strokeMiterlimit: 4,
             strokeDasharray: "none",
             strokeOpacity: 1,
-            filter: "url(#f)",
           }}
         />
         <circle
@@ -305,7 +316,7 @@ const SettingsGear = ({ size = 60 }: Props) => (
           style={{
             display: "inline",
             opacity: 1,
-            fill: "url(#g)",
+            fill: "#ddd",
             fillOpacity: 1,
             stroke: "none",
             strokeWidth: 1,
@@ -476,7 +487,6 @@ const SettingsGear = ({ size = 60 }: Props) => (
         style={{
           display: "inline",
         }}
-        fill="none"
       >
         <path
           d="M40 165.696A112.534 112.534 0 0 0 151.978 268 112.534 112.534 0 0 0 264 165.696Z"
@@ -964,7 +974,7 @@ const SettingsGear = ({ size = 60 }: Props) => (
             overflow: "visible",
             visibility: "visible",
             opacity: 1,
-            fill: "url(#p)",
+            fill: "#ddd",
             fillOpacity: 1,
             fillRule: "nonzero",
             stroke: "none",
@@ -1022,7 +1032,6 @@ const SettingsGear = ({ size = 60 }: Props) => (
         style={{
           display: "inline",
         }}
-        fill="none"
       >
         <circle
           cx={328}
@@ -1143,7 +1152,6 @@ const SettingsGear = ({ size = 60 }: Props) => (
           display: "inline",
           opacity: 0.8,
         }}
-        fill="none"
       >
         <path
           d="M344 62a22 22 0 0 0-22 22 22 22 0 0 0 22 22 22 22 0 0 0 22-22 22 22 0 0 0-22-22Zm0 .957A21.043 21.043 0 0 1 365.043 84 21.043 21.043 0 0 1 344 105.043 21.043 21.043 0 0 1 322.957 84 21.043 21.043 0 0 1 344 62.957Z"

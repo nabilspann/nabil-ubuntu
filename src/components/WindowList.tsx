@@ -5,6 +5,7 @@ import documentViewer from "../../public/images/document-viewer.png";
 import ChromeIcon from "./svgs/ChromeIcon";
 import ChromeWindow from "./Draggable/window/ChromeWindow";
 import SettingsGear from "./svgs/SettingsGear";
+import SettingsWindow from "./Draggable/window/SettingsWindow";
 
 const OpenableWindowsList = () => {
     return [
@@ -57,13 +58,11 @@ const OpenableWindowsList = () => {
       {
         id: "Settings",
         topBarComp: (
-          <div className="flex items-center mx-auto w-fit h-full">
-            Settings
-          </div>
+          <div className="flex items-center mx-auto w-fit h-full">Settings</div>
         ),
         wrappedBody: (
           <>
-            <ChromeWindow />
+            <SettingsWindow />
           </>
         ),
         taskBarIconRef: useRef<HTMLDivElement>(null),
