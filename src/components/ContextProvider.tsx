@@ -43,6 +43,8 @@ interface ContextType {
   openableWindows: OpenableWindowsListType[];
   isShowApplicationsOpen: boolean;
   setIsShowApplicationsOpen: (isOpen: boolean) => void;
+  backgroundImageId: string;
+  changeBackgroundImage: (imageId: string) => void;
 }
 
 const defaultState = {
@@ -62,6 +64,8 @@ const defaultState = {
   shortcutIcons: [],
   isShowApplicationsOpen: false,
   setIsShowApplicationsOpen: (isOpen: boolean) => {},
+  backgroundImageId: localStorage.getItem("ubuntu-backgroundId") || "jellyfish",
+  changeBackgroundImage: () => {},
 };
 
 export const Context = createContext<ContextType>(defaultState);
@@ -72,6 +76,7 @@ export const ContextProvider = ({children}: Props) => {
     const [windows, setWindows] = useState<Window[]>(defaultState.windows);
     const [isShowApplicationsOpen, setIsShowApplicationsOpen] =
       useState(defaultState.isShowApplicationsOpen);
+    const [backgroundImageId, setBackgroundImageId] = useState(defaultState.backgroundImageId);
     const openableWindows = OpenableWindowsList();
 
     const changeMenu = (setting: ChangeMenu) => {
@@ -143,6 +148,11 @@ export const ContextProvider = ({children}: Props) => {
       setWindows(windowsCopy);
     }
 
+    const changeBackgroundImage = (imageId: string) => {
+      setBackgroundImageId(imageId);
+      localStorage.setItem("ubuntu-backgroundId", imageId);
+    }
+
     return (
       <Context.Provider
         value={{
@@ -158,6 +168,8 @@ export const ContextProvider = ({children}: Props) => {
           openableWindows,
           isShowApplicationsOpen,
           setIsShowApplicationsOpen,
+          backgroundImageId,
+          changeBackgroundImage,
         }}
       >
         {children}

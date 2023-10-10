@@ -486,7 +486,7 @@ const DraggableWindow = ({
               </ul>
             </div>
           </div>
-          <div className="h-full w-full" style={{pointerEvents: isDragging ? "none" : "auto"}}>{children}</div>
+          <div className="h-full w-full cursor-auto" style={{pointerEvents: isDragging ? "none" : "auto"}}>{children}</div>
         </div>
       </div>
     </TransitionComp>

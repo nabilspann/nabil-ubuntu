@@ -9,13 +9,13 @@ const Desktop = () => {
     return (
       <div className="h-screen w-screen">
         <TopBar />
-        {/* <BackgroundImageWrapper> */}
-          <div className="h-[calc(100%-theme(spacing.10))] w-full flex flex-col bg-jellyfish bg-no-repeat bg-cover bg-center relative">
+        <BackgroundImageWrapper>
+          {/* <div className="h-[calc(100%-theme(spacing.10))] w-full flex flex-col bg-jellyfish bg-no-repeat bg-cover bg-center relative"> */}
           <DisplayWindows />
           <DisplayShortcuts />
           <ShowApplications />
-          </div>
-        {/* </BackgroundImageWrapper> */}
+          {/* </div> */}
+        </BackgroundImageWrapper>
         <TaskBar />
       </div>
     );

@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import BackgroundImages from './BackgroundImages.json';
 
 const config: Config = {
   content: [
@@ -12,9 +13,7 @@ const config: Config = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        jellyfish: "url('../../public/images/jellyfish.png')",
-        kudu: "url('../../public/images/ubuntu-kudu-wallpaper.jpg')",
-        maroonBells: "url('../../public/images/maroon-bells.jpg')",
+        ...BackgroundImages,
       },
       colors: {
         "ubuntu-dark-1": "#1d1d1d",
