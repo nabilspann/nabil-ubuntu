@@ -11,7 +11,7 @@ const SettingsWindow = () => {
   let windowWidth = 1000;
   let windowHeight = 700;
 
-  if(window){
+  if (typeof window !== "undefined") {
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
   }

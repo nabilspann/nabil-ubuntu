@@ -48,7 +48,7 @@ interface ContextType {
 }
 
 let backgroundImageId = "jellyfish";
-if(window){
+if (typeof window !== "undefined") {
   backgroundImageId =
     window.localStorage.getItem("ubuntu-backgroundId") || "jellyfish";
 }
@@ -156,7 +156,7 @@ export const ContextProvider = ({children}: Props) => {
 
     const changeBackgroundImage = (imageId: string) => {
       setBackgroundImageId(imageId);
-      if(window){
+      if (typeof window !== "undefined") {
         window.localStorage.setItem("ubuntu-backgroundId", imageId);
       }
     }
