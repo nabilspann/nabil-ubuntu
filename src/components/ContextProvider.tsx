@@ -47,6 +47,12 @@ interface ContextType {
   changeBackgroundImage: (imageId: string) => void;
 }
 
+let backgroundImageId = "jellyfish";
+if(window){
+  backgroundImageId =
+    window.localStorage.getItem("ubuntu-backgroundId") || "jellyfish";
+}
+
 const defaultState = {
   topBarDropDown: {
     openedMenu: null,
@@ -64,7 +70,7 @@ const defaultState = {
   shortcutIcons: [],
   isShowApplicationsOpen: false,
   setIsShowApplicationsOpen: (isOpen: boolean) => {},
-  backgroundImageId: localStorage.getItem("ubuntu-backgroundId") || "jellyfish",
+  backgroundImageId,
   changeBackgroundImage: () => {},
 };
 
@@ -150,7 +156,9 @@ export const ContextProvider = ({children}: Props) => {
 
     const changeBackgroundImage = (imageId: string) => {
       setBackgroundImageId(imageId);
-      localStorage.setItem("ubuntu-backgroundId", imageId);
+      if(window){
+        window.localStorage.setItem("ubuntu-backgroundId", imageId);
+      }
     }
 
     return (
