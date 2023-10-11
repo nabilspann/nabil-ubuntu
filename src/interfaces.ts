@@ -1,4 +1,4 @@
-import type {CSSProperties} from 'react';
+import backgroundImages from "../BackgroundImages.json";
 
 export interface SVGProps {
   size: number;
@@ -33,3 +33,5 @@ export interface WindowSettings {
     position: Position;
   };
 };
+
+export const typedBackgroundImagesJson: { [key: string]: any } = backgroundImages;

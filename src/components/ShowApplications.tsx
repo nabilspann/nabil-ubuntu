@@ -1,23 +1,12 @@
 'use client';
-import { useContext, useEffect, useState, CSSProperties, useRef } from "react";
+import { useContext, useRef } from "react";
 import { Context } from "./ContextProvider";
 import { isMobile } from "react-device-detect";
 import TransitionComp from "./TransitionComp";
-
-const INITIALIZE = "initialize-show-applications";
-const CLOSE = "close-show-applications";
-
-interface Settings {
-  isTransitioning: boolean;
-  type: "initialize-show-applications" | "close-show-applications";
-  width: string;
-  height: string;
-  verticalMargin: string;
-  backgroundAnimatedStyles: CSSProperties;
-}
+import { typedBackgroundImagesJson } from "@/interfaces";
 
 const ShowApplications = () => {
-    const { isShowApplicationsOpen, openableWindows, openWindow, setIsShowApplicationsOpen } = useContext(Context);
+    const { isShowApplicationsOpen, openableWindows, openWindow, setIsShowApplicationsOpen, backgroundImageId } = useContext(Context);
     const ref = useRef(null);
 
     return (
@@ -30,11 +19,14 @@ const ShowApplications = () => {
       >
         <div
           className={`w-full h-full bg-ubuntu-dark-5 ${
-            isShowApplicationsOpen ? "z-40" : ""
+            isShowApplicationsOpen ? "z-20" : ""
           }`}
         >
           <div
-            className="bg-jellyfish bg-no-repeat bg-cover bg-center relative mx-auto"
+            className="bg-no-repeat bg-cover bg-center relative mx-auto"
+            style={{
+              backgroundImage: typedBackgroundImagesJson[backgroundImageId],
+            }}
             ref={ref}
             onClick={() => setIsShowApplicationsOpen(false)}
           />

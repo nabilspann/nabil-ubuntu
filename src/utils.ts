@@ -28,3 +28,15 @@ export const restrictToBoundingRect = (
   }
   return value;
 };
+
+export const weekNames = [
+  "Saturday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Sunday",
+];
+
+export const LOCK_SCREEN = "lock-screen";

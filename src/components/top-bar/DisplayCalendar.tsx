@@ -1,5 +1,6 @@
 import Calendar from "react-calendar";
 import { ChevronLeft, ChevronRight } from "../svgs/Chevrons";
+import { weekNames } from "@/utils";
 
 const monthNames = [
   "January",
@@ -14,16 +15,6 @@ const monthNames = [
   "October",
   "November",
   "December",
-];
-
-const weekNames = [
-  "Saturday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Sunday",
 ];
 
 const DisplayCalendar = () => {

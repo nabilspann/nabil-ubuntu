@@ -1,5 +1,6 @@
 {
   "jellyfish": "url('/images/jellyfish.png')",
   "kudu": "url('/images/ubuntu-kudu-wallpaper.jpg')",
-  "maroonBells": "url('/images/maroon-bells.jpg')"
+  "maroonBells": "url('/images/maroon-bells.jpg')",
+  "sopris": "url('/images/mount-sopris.jpg')"
 }

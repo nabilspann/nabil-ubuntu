@@ -45,6 +45,8 @@ interface ContextType {
   setIsShowApplicationsOpen: (isOpen: boolean) => void;
   backgroundImageId: string;
   changeBackgroundImage: (imageId: string) => void;
+  sessionChangeType: string | null;
+  changeSession: (sessionType: string | null) => void;
 }
 
 let backgroundImageId = "jellyfish";
@@ -72,6 +74,8 @@ const defaultState = {
   setIsShowApplicationsOpen: (isOpen: boolean) => {},
   backgroundImageId,
   changeBackgroundImage: () => {},
+  sessionChangeType: null,
+  changeSession: (sessionType: string | null) => {},
 };
 
 export const Context = createContext<ContextType>(defaultState);
@@ -83,6 +87,10 @@ export const ContextProvider = ({children}: Props) => {
     const [isShowApplicationsOpen, setIsShowApplicationsOpen] =
       useState(defaultState.isShowApplicationsOpen);
     const [backgroundImageId, setBackgroundImageId] = useState(defaultState.backgroundImageId);
+    const [sessionChangeType, setSessionChangeType] = useState<
+      ContextType["sessionChangeType"]
+    >(defaultState.sessionChangeType);
+
     const openableWindows = OpenableWindowsList();
 
     const changeMenu = (setting: ChangeMenu) => {
@@ -161,6 +169,10 @@ export const ContextProvider = ({children}: Props) => {
       }
     }
 
+    const changeSession = (sessionType: string | null) => {
+      setSessionChangeType(sessionType);
+    }
+
     return (
       <Context.Provider
         value={{
@@ -178,6 +190,8 @@ export const ContextProvider = ({children}: Props) => {
           setIsShowApplicationsOpen,
           backgroundImageId,
           changeBackgroundImage,
+          sessionChangeType,
+          changeSession,
         }}
       >
         {children}

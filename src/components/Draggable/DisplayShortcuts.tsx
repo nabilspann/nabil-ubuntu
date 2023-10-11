@@ -15,7 +15,7 @@ import {
   rectSwappingStrategy,
 } from "@dnd-kit/sortable";
 import Shortcut from "./Shortcut";
-import { restrictToBoundingRect } from "@/utilFunctions";
+import { restrictToBoundingRect } from "@/utils";
 import { Context } from "../ContextProvider";
 
 interface IconsList {

@@ -12,7 +12,7 @@ import {
 } from "@dnd-kit/modifiers";
 import { Context } from "../ContextProvider";
 import DraggableWindow from "./window/DraggableWindow";
-import { restrictToBoundingRect } from "@/utilFunctions";
+import { restrictToBoundingRect } from "@/utils";
 
 const DisplayWindows = () => {
   const {windows, focusWindow, closeWindow, minimizeWindow} = useContext(Context);

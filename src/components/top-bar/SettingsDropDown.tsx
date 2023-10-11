@@ -6,9 +6,10 @@ import { AudioHigh } from "../svgs/Audio";
 import PowerDropDown from "./PowerDropDown";
 import RangeInput from "../RangeInput";
 import { Context } from "../ContextProvider";
+import { LOCK_SCREEN } from "@/utils";
 
 const SettingsDropDown = () => {
-  const { volume, changeVolume } = useContext(Context);
+  const { volume, changeVolume, changeSession, changeMenu } = useContext(Context);
 
   const handleRangeInput = (width: number) => {
     changeVolume(width);
@@ -21,7 +22,11 @@ const SettingsDropDown = () => {
           <AudioHigh size={20} />
         </span>
         <span className="flex px-1.5 items-center">
-          <RangeInput className="volume-slider" handleWidth={handleRangeInput} widthValue={volume}/>
+          <RangeInput
+            className="volume-slider"
+            handleWidth={handleRangeInput}
+            widthValue={volume}
+          />
         </span>
       </div>
       <div className="flex flex-row items-center py-1.5 hover:bg-zinc-700 rounded-lg">
@@ -30,7 +35,13 @@ const SettingsDropDown = () => {
         </span>
         <span className="px-1.5">Settings</span>
       </div>
-      <div className="flex flex-row items-center py-1.5 hover:bg-zinc-700 rounded-lg">
+      <div
+        className="flex flex-row items-center py-1.5 hover:bg-zinc-700 rounded-lg"
+        onClick={() => {
+          changeSession(LOCK_SCREEN);
+          changeMenu(null);
+        }}
+      >
         <span className="px-1.5">
           <Lock size={20} />
         </span>

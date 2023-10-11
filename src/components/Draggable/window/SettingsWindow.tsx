@@ -2,9 +2,7 @@
 import { useContext } from "react";
 import { Context } from "@/components/ContextProvider";
 import Image from "next/image";
-import backgroundImages from "../../../../BackgroundImages.json";
-
-const typedBackgroundImagesJson: { [key: string]: any } = backgroundImages;
+import { typedBackgroundImagesJson } from "@/interfaces";
 
 const SettingsWindow = () => {
   const { backgroundImageId, changeBackgroundImage } = useContext(Context);

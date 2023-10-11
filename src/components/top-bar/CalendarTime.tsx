@@ -15,6 +15,18 @@ const CalendarTime = () => {
   const ref = useRef<HTMLDivElement>(null);
   const isOpened = topBarDropDown.openedMenu === calendarMenu;
 
+  const dateLogic = (currentDate: Date) => {
+    return `${currentDate.toLocaleString("en-US", {
+      month: "short",
+    })} ${currentDate.getDate()}`
+  }
+
+  const timeLogic = (currentDate: Date) => {
+    return `${currentDate.getHours()}:${("0" + currentDate.getMinutes()).slice(
+      -2
+    )}`;
+  };
+
   return (
     <div ref={ref}>
       <div
@@ -23,11 +35,17 @@ const CalendarTime = () => {
         } w-fit mx-auto rounded-3xl px-2`}
         onClick={() => changeMenu(calendarMenu)}
       >
-        <DisplayTime />
+        <DisplayTime
+          className="flex flex-row"
+          timeClass="px-1.5"
+          dateClass="px-1.5"
+          timeLogic={timeLogic}
+          dateLogic={dateLogic}
+        />
       </div>
       {isOpened && (
         <ClickOutsideWrapper myRef={ref} handleClick={() => changeMenu(null)}>
-          <div className="absolute bg-ubuntu-dark-1 p-3 left-0 right-0 mx-auto w-fit z-10 top-10 rounded-lg">
+          <div className="absolute bg-ubuntu-dark-1 p-3 left-0 right-0 mx-auto w-fit z-30 top-10 rounded-lg">
             <DisplayCalendar />
           </div>
         </ClickOutsideWrapper>

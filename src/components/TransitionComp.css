@@ -42,15 +42,15 @@
 
 .show-applications-enter-active {
   transition: all 250ms ease;
-  @apply w-1/5 h-1/5 min-w-background-image min-h-background-image my-4
+  @apply w-1/5 h-1/5 min-w-background-image min-h-background-image my-4;
 }
 
 .show-applications-enter-done {
-  @apply w-1/5 h-1/5 min-w-background-image min-h-background-image my-4
+  @apply w-1/5 h-1/5 min-w-background-image min-h-background-image my-4;
 }
 
 .show-applications-exit{
-  @apply w-1/5 h-1/5 min-w-background-image min-h-background-image my-4
+  @apply w-1/5 h-1/5 min-w-background-image min-h-background-image my-4;
 }
 
 .show-applications-exit-active {
@@ -60,4 +60,22 @@
 
 .show-applications-exit-done {
   @apply w-full h-full my-0;
+}
+
+.lock-screen-enter {
+  @apply bottom-full;
+}
+
+.lock-screen-enter-active {
+  transition: all 250ms ease;
+  @apply bottom-0;
+}
+
+.lock-screen-exit {
+  @apply bottom-0;
+}
+
+.lock-screen-exit-active {
+  transition: all 250ms ease;
+  @apply bottom-full;
 }

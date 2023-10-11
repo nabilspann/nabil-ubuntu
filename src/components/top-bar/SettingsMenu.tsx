@@ -47,7 +47,7 @@ const SettingsMenu = () => {
       </div>
       {isOpened && (
         <ClickOutsideWrapper myRef={ref} handleClick={() => changeMenu(null)}>
-          <div className="absolute bg-ubuntu-dark-1 p-3 right-2.5 w-72 z-10 top-10 rounded-lg">
+          <div className="absolute bg-ubuntu-dark-1 p-3 right-2.5 w-72 z-30 top-10 rounded-lg">
             <SettingsDropDown />
           </div>
         </ClickOutsideWrapper>

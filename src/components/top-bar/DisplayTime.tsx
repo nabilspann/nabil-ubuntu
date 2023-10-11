@@ -1,7 +1,14 @@
 'use client';
 import { useState, useEffect } from 'react';
 
-const DisplayTime = () => {
+interface Props {
+  className: string;
+  dateClass?: string;
+  timeClass?: string;
+  dateLogic: (date: Date) => string;
+  timeLogic: (date: Date) => string;
+}
+const DisplayTime = ({className, dateClass, timeClass, dateLogic, timeLogic}: Props) => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
@@ -10,17 +17,15 @@ const DisplayTime = () => {
     return () => clearInterval(dateInterval);
   }, []);
 
-  const displayDate = `${currentDate.toLocaleString("en-US", {
-    month: "short",
-  })} ${currentDate.getDate()}`;
+  const displayDate = dateLogic(currentDate);
 
-  const displayTime = `${currentDate.getHours()}:${('0' + currentDate.getMinutes()).slice(-2)}`;
+  const displayTime = timeLogic(currentDate);
 
   return (
-    <>
-      <span className="px-1.5">{displayDate}</span>
-      <span className="px-1.5">{displayTime}</span>
-    </>
+    <div className={className}>
+      <span className={dateClass}>{displayDate}</span>
+      <span className={timeClass}>{displayTime}</span>
+    </div>
   );
 }
 
