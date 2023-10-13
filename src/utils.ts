@@ -40,3 +40,5 @@ export const weekNames = [
 ];
 
 export const LOCK_SCREEN = "lock-screen";
+export const SHUT_DOWN = "shut-down";
+export const RESTART = "restart-session";

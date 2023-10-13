@@ -172,7 +172,7 @@ export const ContextProvider = ({children}: Props) => {
     const changeSession = (sessionType: string | null) => {
       setSessionChangeType(sessionType);
     }
-
+  
     return (
       <Context.Provider
         value={{

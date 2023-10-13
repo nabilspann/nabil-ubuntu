@@ -1,3 +1,7 @@
+.all-transition{
+  transition: all 250ms ease;
+}
+
 .drop-down-expand-enter {
   transition: max-height 0.2s ease-in;
   @apply max-h-0 overflow-hidden;
@@ -20,7 +24,7 @@
 .close-window-enter-active {
   opacity: 0;
   transform: scale(0.8);
-  transition: opacity 200ms, transform 200ms;
+  @apply all-transition
 }
 
 .initialize-window-enter{
@@ -29,11 +33,11 @@
 
 .initialize-window-enter-active{
   transform: scale(1);
-  transition: transform 200ms ease;
+  @apply all-transition
 }
 
 .fullscreen-window-enter {
-  transition: all 150ms linear;
+  @apply all-transition
 }
 
 .show-applications-enter {
@@ -41,8 +45,7 @@
 }
 
 .show-applications-enter-active {
-  transition: all 250ms ease;
-  @apply w-1/5 h-1/5 min-w-background-image min-h-background-image my-4;
+  @apply w-1/5 h-1/5 min-w-background-image min-h-background-image my-4 all-transition;
 }
 
 .show-applications-enter-done {
@@ -54,8 +57,7 @@
 }
 
 .show-applications-exit-active {
-  transition: all 250ms ease;
-  @apply w-full h-full my-0;
+  @apply w-full h-full my-0 all-transition;
 }
 
 .show-applications-exit-done {
@@ -67,8 +69,7 @@
 }
 
 .lock-screen-enter-active {
-  transition: all 250ms ease;
-  @apply bottom-0;
+  @apply bottom-0 all-transition;
 }
 
 .lock-screen-exit {
@@ -76,6 +77,22 @@
 }
 
 .lock-screen-exit-active {
-  transition: all 250ms ease;
-  @apply bottom-full;
+  @apply bottom-full all-transition;
 }
+
+.shut-down-enter, .restart-session-enter{
+  @apply opacity-0;
+}
+
+.shut-down-enter-active, .restart-session-active{
+  @apply opacity-100 all-transition;
+}
+
+.shut-down-exit, .restart-session-exit{
+  @apply opacity-100;
+}
+
+.shut-down-exit-active, .restart-session-exit-active{
+  @apply opacity-0 all-transition;
+}
+

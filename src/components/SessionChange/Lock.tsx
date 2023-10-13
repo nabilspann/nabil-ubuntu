@@ -1,13 +1,9 @@
 'use client';
-import { useContext, useEffect, RefObject } from "react";
+import { useContext, useEffect } from "react";
 import { Context } from "../ContextProvider";
 import { typedBackgroundImagesJson } from "@/interfaces";
 import DisplayTime from "../top-bar/DisplayTime";
 import {  weekNames } from "@/utils";
-
-interface Props {
-  myRef: RefObject<HTMLDivElement>;
-};
 
 const Lock = () => {
     const {
@@ -28,9 +24,7 @@ const Lock = () => {
     };
 
     useEffect(() => {
-        console.log("useffect enabled")
         const Login = () => {
-            console.log('keydowned')
             changeSession(null);
         };
 

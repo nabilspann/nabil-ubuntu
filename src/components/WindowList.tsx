@@ -1,11 +1,10 @@
 'use client';
 import { useRef } from "react";
-import Image from "next/image";
-import documentViewer from "../../public/images/document-viewer.png";
 import ChromeIcon from "./svgs/ChromeIcon";
 import ChromeWindow from "./Draggable/window/ChromeWindow";
 import SettingsGear from "./svgs/SettingsGear";
 import SettingsWindow from "./Draggable/window/SettingsWindow";
+import Evince from "./svgs/Evince";
 
 const OpenableWindowsList = () => {
     return [
@@ -27,12 +26,7 @@ const OpenableWindowsList = () => {
         taskBarIconRef: useRef<HTMLDivElement>(null),
         icon: (size = 50) => (
           <>
-            <Image
-              src={documentViewer}
-              alt="document viewer"
-              width={size}
-              height={size}
-            />
+            <Evince size={size}/>
           </>
         ),
       },

@@ -2,8 +2,10 @@
 import { useContext, useRef, useState, useEffect } from "react";
 import { Context } from "../ContextProvider";
 import Lock from "./Lock";
-import { LOCK_SCREEN } from "@/utils";
+import { LOCK_SCREEN, RESTART, SHUT_DOWN } from "@/utils";
 import TransitionComp from "../TransitionComp";
+import ShutDown from "./ShutDown";
+import Restart from "./Restart";
 
 const SessionChange = () => {
     const {sessionChangeType} = useContext(Context);
@@ -20,6 +22,12 @@ const SessionChange = () => {
         switch (sessionChangeType) {
           case LOCK_SCREEN:
             sessionComp = <Lock />;
+            break;
+          case SHUT_DOWN:
+            sessionComp = <ShutDown />
+            break;
+          case RESTART:
+            sessionComp = <Restart />
             break;
           default:
             sessionComp = <></>;

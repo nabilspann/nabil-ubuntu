@@ -1,11 +1,17 @@
 'use client';
+import { useContext } from "react";
+import { Context } from "../ContextProvider";
 import Power from "../svgs/Power";
 import { ChevronDown, ChevronRight } from "../svgs/Chevrons";
 import { useState } from "react";
 import TransitionComp from "../TransitionComp";
+import { RESTART, SHUT_DOWN } from "@/utils";
 
 const PowerDropDown = () => {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const { changeSession, changeMenu } =
+      useContext(Context);
+    const [isExpanded, setIsExpanded] =
+      useState(false);
 
     const handleClick = () => {
         setIsExpanded(!isExpanded);
@@ -42,13 +48,26 @@ const PowerDropDown = () => {
           unmountOnExit
         >
           <ul
-            className={`text-left pl-10 transition-all delay-500 rounded-b-lg ${
+            className={`text-left transition-all delay-500 rounded-b-lg ${
               isExpanded ? "bg-ubuntu-gray-3" : ""
             }`}
           >
-            <li className="py-2">Restart...</li>
-            <li className="py-2">Power Off...</li>
-            <li className="py-2">Reset Ubuntu...</li>
+            <li className="py-2 hover:bg-zinc-700 pl-10" onClick={() => {
+              changeSession(RESTART);
+              changeMenu(null);
+            }}>Restart...</li>
+            <li
+              className="py-2 hover:bg-zinc-700 pl-10"
+              onClick={() => {
+                changeSession(SHUT_DOWN);
+                changeMenu(null);
+              }}
+            >
+              Power Off...
+            </li>
+            <li className="py-2 hover:bg-zinc-700 pl-10 rounded-b-lg">
+              Reset Ubuntu...
+            </li>
           </ul>
         </TransitionComp>
       </>
