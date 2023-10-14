@@ -80,19 +80,19 @@
   @apply bottom-full all-transition;
 }
 
-.shut-down-enter, .restart-session-enter{
+.shut-down-enter, .restart-session-enter, .reset-ubuntu-enter{
   @apply opacity-0;
 }
 
-.shut-down-enter-active, .restart-session-active{
+.shut-down-enter-active, .restart-session-enter-active, .reset-ubuntu-enter-active{
   @apply opacity-100 all-transition;
 }
 
-.shut-down-exit, .restart-session-exit{
+.shut-down-exit, .restart-session-exit, .reset-ubuntu-exit{
   @apply opacity-100;
 }
 
-.shut-down-exit-active, .restart-session-exit-active{
+.shut-down-exit-active, .restart-session-exit-active, .reset-ubuntu-exit-active{
   @apply opacity-0 all-transition;
 }
 

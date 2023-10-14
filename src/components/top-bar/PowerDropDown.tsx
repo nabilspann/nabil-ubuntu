@@ -5,10 +5,10 @@ import Power from "../svgs/Power";
 import { ChevronDown, ChevronRight } from "../svgs/Chevrons";
 import { useState } from "react";
 import TransitionComp from "../TransitionComp";
-import { RESTART, SHUT_DOWN } from "@/utils";
+import { RESET, RESTART, SHUT_DOWN } from "@/utils";
 
 const PowerDropDown = () => {
-    const { changeSession, changeMenu } =
+    const { changeSession, changeMenu, resetContextAndLocalStorage } =
       useContext(Context);
     const [isExpanded, setIsExpanded] =
       useState(false);
@@ -65,7 +65,10 @@ const PowerDropDown = () => {
             >
               Power Off...
             </li>
-            <li className="py-2 hover:bg-zinc-700 pl-10 rounded-b-lg">
+            <li className="py-2 hover:bg-zinc-700 pl-10 rounded-b-lg" onClick={() => {
+              changeSession(RESET);
+              changeMenu(null);
+            }}>
               Reset Ubuntu...
             </li>
           </ul>

@@ -2,10 +2,11 @@
 import { useContext, useRef, useState, useEffect } from "react";
 import { Context } from "../ContextProvider";
 import Lock from "./Lock";
-import { LOCK_SCREEN, RESTART, SHUT_DOWN } from "@/utils";
+import { LOCK_SCREEN, RESTART, SHUT_DOWN, RESET } from "@/utils";
 import TransitionComp from "../TransitionComp";
 import ShutDown from "./ShutDown";
 import Restart from "./Restart";
+import ResetUbuntu from "./ResetUbuntu";
 
 const SessionChange = () => {
     const {sessionChangeType} = useContext(Context);
@@ -28,6 +29,9 @@ const SessionChange = () => {
             break;
           case RESTART:
             sessionComp = <Restart />
+            break;
+          case RESET:
+            sessionComp = <ResetUbuntu />
             break;
           default:
             sessionComp = <></>;

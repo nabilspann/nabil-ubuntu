@@ -7,9 +7,10 @@ import PowerDropDown from "./PowerDropDown";
 import RangeInput from "../RangeInput";
 import { Context } from "../ContextProvider";
 import { LOCK_SCREEN } from "@/utils";
+import { SETTINGS } from "@/utils";
 
 const SettingsDropDown = () => {
-  const { volume, changeVolume, changeSession, changeMenu } = useContext(Context);
+  const { volume, changeVolume, changeSession, changeMenu, openWindow } = useContext(Context);
 
   const handleRangeInput = (width: number) => {
     changeVolume(width);
@@ -29,7 +30,10 @@ const SettingsDropDown = () => {
           />
         </span>
       </div>
-      <div className="flex flex-row items-center py-1.5 hover:bg-zinc-700 rounded-lg">
+      <div className="flex flex-row items-center py-1.5 hover:bg-zinc-700 rounded-lg" onClick={() => {
+        openWindow(SETTINGS);
+        changeMenu(null);
+      }}>
         <span className="px-1.5 py-0.5">
           <Gear size={20} color="#FFF" />
         </span>

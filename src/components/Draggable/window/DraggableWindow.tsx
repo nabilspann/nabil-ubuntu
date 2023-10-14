@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useDraggable, useDndMonitor } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { isMobile } from "react-device-detect";
 import TransitionComp from "../../TransitionComp";
 import WindowClose from "../../svgs/WindowClose";
 import WindowRestore from "../../svgs/WindowRestore";
@@ -195,7 +196,7 @@ const DraggableWindow = ({
   const [windowSettings, setWindowSettings] = useState<WindowSettings>({
     isTransitioning: false,
     type: null,
-    position: { x: innerWidth * 0.3, y: innerHeight * 0.1 },
+    position: { x: isMobile ? 0 : innerWidth * 0.3, y: isMobile ? -40 : innerHeight * 0.1 },
     size: {
       width: 0,
       height: 0,
@@ -369,8 +370,8 @@ const DraggableWindow = ({
          setWindowSettings((currentSettings) => ({
            ...currentSettings,
            size: {
-            width: innerWidth * 0.4,
-            height: innerHeight * 0.6,
+            width: isMobile ? draggableScreenRect.innerWidth : innerWidth * 0.4,
+            height: isMobile ? draggableScreenRect.innerHeight + 40 :  innerHeight * 0.6,
           },
          }));
       },
@@ -434,7 +435,7 @@ const DraggableWindow = ({
         )}
         <div
           className={`flex flex-col h-full w-full  border-black border-2 ${
-            windowSettings.fullScreen.isFullScreen ? "" : "rounded-xl"
+            windowSettings.fullScreen.isFullScreen || isMobile ? "" : "rounded-xl"
           } overflow-hidden`}
         >
           <div className="bg-ubuntu-dark-2 h-14 flex flex-row w-full">
@@ -455,7 +456,7 @@ const DraggableWindow = ({
                 >
                   <WindowMinimize size={20} />
                 </li>
-                <li
+                {!isMobile && <li
                   className={iconListClass}
                   onClick={() => {
                     setWindowSettings((currentSettings) => ({
@@ -470,7 +471,7 @@ const DraggableWindow = ({
                   ) : (
                     <WindowRestore size={20} color="#fff" />
                   )}
-                </li>
+                </li>}
                 <li
                   className={iconListClass}
                   onClick={() => {

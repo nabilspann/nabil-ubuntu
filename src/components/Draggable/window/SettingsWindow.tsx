@@ -25,7 +25,9 @@ const SettingsWindow = () => {
       <div
         className="grid w-full gap-6 justify-center pt-6"
         style={{
-          gridTemplateColumns: `repeat(auto-fill, ${(windowWidth * 1) / 10}px)`,
+          gridTemplateColumns: `repeat(auto-fill, ${
+            (windowWidth * 1) / 10 > 100 ? (windowWidth * 1) / 10 : 100
+          }px)`,
         }}
       >
         {Object.entries(typedBackgroundImagesJson).map((image) => {
@@ -33,7 +35,11 @@ const SettingsWindow = () => {
           return (
             <Image
               key={image[0]}
-              className={`min-w-[100px] object-cover ${backgroundImageId === image[0] ? "border-4 border-ubuntu-blue-1" : ""}`}
+              className={`min-w-[100px] object-cover ${
+                backgroundImageId === image[0]
+                  ? "border-4 border-ubuntu-blue-1"
+                  : ""
+              }`}
               style={{
                 width: `${(windowWidth * 1) / 10}px`,
                 height: `${(windowHeight * 1) / 8}px`,

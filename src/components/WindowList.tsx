@@ -5,6 +5,7 @@ import ChromeWindow from "./Draggable/window/ChromeWindow";
 import SettingsGear from "./svgs/SettingsGear";
 import SettingsWindow from "./Draggable/window/SettingsWindow";
 import Evince from "./svgs/Evince";
+import { SETTINGS } from "@/utils";
 
 const OpenableWindowsList = () => {
     return [
@@ -50,7 +51,7 @@ const OpenableWindowsList = () => {
         ),
       },
       {
-        id: "Settings",
+        id: SETTINGS,
         topBarComp: (
           <div className="flex items-center mx-auto w-fit h-full">Settings</div>
         ),

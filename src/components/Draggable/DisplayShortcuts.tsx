@@ -18,7 +18,7 @@ import Shortcut from "./Shortcut";
 import { restrictToBoundingRect } from "@/utils";
 import { Context } from "../ContextProvider";
 
-interface IconsList {
+interface Icon {
   id: UniqueIdentifier;
   children: ReactNode;
 };
@@ -28,20 +28,17 @@ interface Settings {
   height: number;
   numberOfShortcutsHorizontally: number;
   numberOfShortcutsVertically: number;
-  icons: IconsList[];
   activeId: UniqueIdentifier | null;
 }
 
 const DisplayShortcuts = () => {
-  const { openWindow, openableWindows } = useContext(Context);
+  const { openWindow, openableWindows, shortCutRef, shortCutIconsList, updateShortCutIcon, initializeIcons } = useContext(Context);
   const innerDivRef = useRef<HTMLDivElement>(null);
-  const outerDivRef = useRef<HTMLDivElement>(null);
   const [shortcutsSettings, setShortcutsSettings] = useState<Settings>({
     width: 0,
     height: 0,
     numberOfShortcutsHorizontally: 0,
     numberOfShortcutsVertically: 0,
-    icons: [],
     activeId: null,
   });
 
@@ -65,18 +62,18 @@ const DisplayShortcuts = () => {
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (over && active.id !== over.id) {
-      setShortcutsSettings((currentSettings) => {
-        const newIconsList = [...currentSettings.icons];
-        const oldIndex = newIconsList.map((icon) => icon.id).indexOf(active.id);
-        const newIndex = newIconsList.map((icon) => icon.id).indexOf(over.id);
+      const newIconsList = [...shortCutIconsList];
+      const oldIndex = newIconsList.map((icon) => icon.id).indexOf(active.id);
+      const newIndex = newIconsList.map((icon) => icon.id).indexOf(over.id);
 
-        const temp = newIconsList[oldIndex];
-        newIconsList[oldIndex] = newIconsList[newIndex];
-        newIconsList[newIndex] = temp;
+      const temp = newIconsList[oldIndex];
+      newIconsList[oldIndex] = newIconsList[newIndex];
+      newIconsList[newIndex] = temp;
+      updateShortCutIcon(newIconsList);
+      setShortcutsSettings((currentSettings) => {
         return {
           ...currentSettings,
           activeId: null,
-          icons: newIconsList,
         };
       });
     } else {
@@ -103,12 +100,12 @@ const DisplayShortcuts = () => {
   );
 
   useEffect(() => {
-    if (outerDivRef.current?.getBoundingClientRect()) {
+    if (shortCutRef.current?.getBoundingClientRect()) {
       const numberOfShortcutsHorizontally = Math.floor(
-        outerDivRef.current?.getBoundingClientRect().width / 144
+        shortCutRef.current?.getBoundingClientRect().width / 144
       );
       const numberOfShortcutsVertically = Math.floor(
-        outerDivRef.current?.getBoundingClientRect().height / 112
+        shortCutRef.current?.getBoundingClientRect().height / 112
       );
 
       if (
@@ -117,42 +114,46 @@ const DisplayShortcuts = () => {
         numberOfShortcutsVertically !==
           shortcutsSettings.numberOfShortcutsVertically
       ) {
-      const icons = openableWindows.map(({ icon, id }) => ({
-        id,
-        children: (
-          <>
-            {icon()}
-            <div className="text-center">{id}</div>
-          </>
-        ),
-      }));
+        const icons = openableWindows.map(({ icon, id }) => ({
+          id,
+          children: (
+            <>
+              {icon()}
+              <div className="text-center">{id}</div>
+            </>
+          ),
+        }));
 
-      const disabledIcons: IconsList[] = [];
-      for (
-        let i = 0;
-        i <
-        numberOfShortcutsHorizontally * numberOfShortcutsVertically -
-          icons.length;
-        i++
-      ) {
-        disabledIcons.push({
-          id: `disabled-${crypto.randomUUID()}`,
-          children: <></>,
+        const disabledIcons: Icon[] = [];
+        for (
+          let i = 0;
+          i <
+          numberOfShortcutsHorizontally * numberOfShortcutsVertically -
+            icons.length;
+          i++
+        ) {
+          disabledIcons.push({
+            id: `disabled-${crypto.randomUUID()}`,
+            children: <></>,
+          });
+        }
+
+        
+        updateShortCutIcon(initializeIcons());
+
+        setShortcutsSettings({
+          activeId: null,
+          width: numberOfShortcutsHorizontally * 144,
+          height: numberOfShortcutsVertically * 112,
+          numberOfShortcutsHorizontally,
+          numberOfShortcutsVertically,
         });
-      }
-
-      setShortcutsSettings({
-        activeId: null,
-        width: numberOfShortcutsHorizontally * 144,
-        height: numberOfShortcutsVertically * 112,
-        numberOfShortcutsHorizontally,
-        numberOfShortcutsVertically,
-        icons: [...icons, ...disabledIcons],
-      });
       }
     }
   }, [
-    outerDivRef,
+    initializeIcons,
+    updateShortCutIcon,
+    shortCutRef,
     openableWindows,
     shortcutsSettings.numberOfShortcutsHorizontally,
     shortcutsSettings.numberOfShortcutsVertically,
@@ -161,7 +162,7 @@ const DisplayShortcuts = () => {
   return (
     <div
       className={`h-full w-[calc(100%-theme(spacing.20))] right-0 bottom-0 absolute flex flex-col items-center justify-center`}
-      ref={outerDivRef}
+      ref={shortCutRef}
     >
       <div
         className="grid grid-flow-col"
@@ -182,24 +183,33 @@ const DisplayShortcuts = () => {
           onDragCancel={handleDragCancel}
         >
           <SortableContext
-            items={shortcutsSettings.icons}
+            items={shortCutIconsList}
             strategy={rectSwappingStrategy}
           >
-            {shortcutsSettings.icons.map(({ id, children }) => (
-              <Shortcut
-                id={id}
-                key={id}
-                className={`flex flex-col items-center justify-center ${
-                  id.toString().includes("disabled") ? "cursor-default" : ""
-                }`}
-                handleClick={() => {
-                  if (!id.toString().includes("disabled"))
-                    openWindow(id.toString());
-                }}
-              >
-                {children}
-              </Shortcut>
-            ))}
+            {shortCutIconsList.map(({ id }) => {
+              const renderComponent = id.toString().includes("disabled") ? (
+                <></>
+              ) : (
+                <>
+                  {openableWindows.find((window) => window.id === id)?.icon()}
+                  <div className="text-center">{id}</div>
+                </>
+              );
+              return (
+                <Shortcut
+                  id={id}
+                  key={id}
+                  className={`flex flex-col items-center justify-center ${
+                    id.toString().includes("disabled") ? "cursor-default" : ""
+                  }`}
+                  handleClick={() => {
+                    if (!id.toString().includes("disabled"))
+                      openWindow(id.toString());
+                  }}
+                >
+                  {renderComponent}
+                </Shortcut>
+              );})}
           </SortableContext>
         </DndContext>
       </div>

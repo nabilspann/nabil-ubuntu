@@ -1,5 +1,6 @@
 'use client';
-import { createContext, useState, ReactNode, RefObject } from 'react';
+import { createContext, useState, ReactNode, RefObject, useRef } from 'react';
+import { UniqueIdentifier } from '@dnd-kit/core';
 import OpenableWindowsList from './WindowList';
 
 interface Props {
@@ -30,6 +31,10 @@ interface OpenableWindowsListType {
   icon: (size?: number) => ReactNode;
 }
 
+interface Icon {
+  id: UniqueIdentifier;
+};
+
 interface ContextType {
   topBarDropDown: OpenedMenu;
   changeMenu: (x: ChangeMenu) => void;
@@ -47,12 +52,32 @@ interface ContextType {
   changeBackgroundImage: (imageId: string) => void;
   sessionChangeType: string | null;
   changeSession: (sessionType: string | null) => void;
+  shortCutRef: RefObject<HTMLDivElement>;
+  shortCutIconsList: Icon[];
+  updateShortCutIcon: (icons: Icon[]) => void;
+  initializeIcons: () => Icon[];
+  resetContextAndLocalStorage: () => void;
 }
 
+const isJson = (str: string | null) => {
+  if(!str) return false;
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+let storedShortCutIcons: Icon[] | null = null;
 let backgroundImageId = "jellyfish";
 if (typeof window !== "undefined") {
   backgroundImageId =
     window.localStorage.getItem("ubuntu-backgroundId") || "jellyfish";
+  const storedIconValue = window.localStorage.getItem("ubuntu-shortcut-icons");
+  storedShortCutIcons = isJson(storedIconValue)
+    ? JSON.parse(storedIconValue as string)
+    : null;
 }
 
 const defaultState = {
@@ -76,6 +101,11 @@ const defaultState = {
   changeBackgroundImage: () => {},
   sessionChangeType: null,
   changeSession: (sessionType: string | null) => {},
+  shortCutRef: { current: null },
+  shortCutIconsList: [],
+  updateShortCutIcon: (icons: Icon[]) => {},
+  initializeIcons: () => [],
+  resetContextAndLocalStorage: () => {},
 };
 
 export const Context = createContext<ContextType>(defaultState);
@@ -90,8 +120,51 @@ export const ContextProvider = ({children}: Props) => {
     const [sessionChangeType, setSessionChangeType] = useState<
       ContextType["sessionChangeType"]
     >(defaultState.sessionChangeType);
-
+    const shortCutRef = useRef<HTMLDivElement>(null);
+    
     const openableWindows = OpenableWindowsList();
+
+    const initializeIcons = (resetIconsBackToOriginal = false) => {
+      if (!resetIconsBackToOriginal && storedShortCutIcons) {
+        return [...storedShortCutIcons];
+      } else if (shortCutRef.current?.getBoundingClientRect()) {
+        const numberOfShortcutsHorizontally = Math.floor(
+          shortCutRef.current?.getBoundingClientRect().width / 144
+        );
+        const numberOfShortcutsVertically = Math.floor(
+          shortCutRef.current?.getBoundingClientRect().height / 112
+        );
+
+        const icons = openableWindows.map(({ id }) => ({
+          id,
+        }));
+
+        const disabledIcons: Icon[] = [];
+        for (
+          let i = 0;
+          i <
+          numberOfShortcutsHorizontally * numberOfShortcutsVertically -
+            icons.length;
+          i++
+        ) {
+          disabledIcons.push({
+            id: `disabled-${crypto.randomUUID()}`,
+          });
+        }
+
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(
+            "ubuntu-shortcut-icons",
+            JSON.stringify([...icons, ...disabledIcons])
+          );
+        }
+
+        return [...icons, ...disabledIcons];
+      }
+      return []
+    };
+
+    const [shortCutIconsList, setShortCutIconsList] = useState<Icon[]>([]);
 
     const changeMenu = (setting: ChangeMenu) => {
         let openedMenu = setting;        
@@ -172,6 +245,28 @@ export const ContextProvider = ({children}: Props) => {
     const changeSession = (sessionType: string | null) => {
       setSessionChangeType(sessionType);
     }
+
+    const updateShortCutIcon = (icons: Icon[]) => {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(
+          "ubuntu-shortcut-icons",
+          JSON.stringify(icons)
+        );
+      }
+      setShortCutIconsList(icons);
+    }
+
+    const resetContextAndLocalStorage = () => {
+      setTopBarDropDown(defaultState.topBarDropDown);
+      setCurrentVolume(defaultState.volume);
+      setWindows(defaultState.windows);
+      setIsShowApplicationsOpen(defaultState.isShowApplicationsOpen);
+      setBackgroundImageId(defaultState.backgroundImageId);
+      setShortCutIconsList(initializeIcons(true));
+      if (typeof window !== "undefined") {
+          window.localStorage.setItem("ubuntu-backgroundId", "jellyfish");
+      }
+    }
   
     return (
       <Context.Provider
@@ -192,6 +287,11 @@ export const ContextProvider = ({children}: Props) => {
           changeBackgroundImage,
           sessionChangeType,
           changeSession,
+          shortCutRef,
+          shortCutIconsList,
+          updateShortCutIcon,
+          initializeIcons,
+          resetContextAndLocalStorage,
         }}
       >
         {children}
