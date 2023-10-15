@@ -10,7 +10,7 @@ const TaskIconWrapper = ({ children, handleClick = () => {}, iconRef }: Props) =
   return (
     <div
       ref={iconRef}
-      className="p-3 hover:bg-gray-400 rounded-2xl"
+      className="flex flex-row items-center justify-center p-3 w-full hover:bg-gray-400 rounded-2xl"
       onClick={() => {
         handleClick();
       }}
