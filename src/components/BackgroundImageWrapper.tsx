@@ -1,5 +1,11 @@
 'use client';
-import { ReactNode, useContext, useState, useEffect } from "react";
+import {
+  ReactNode,
+  useContext,
+  useState,
+  useEffect,
+  CSSProperties,
+} from "react";
 import { Context } from "./ContextProvider";
 import { typedBackgroundImagesJson } from "@/interfaces";
 
@@ -13,8 +19,9 @@ const BackgroundImageWrapper = ({children}: Props) => {
     const [currentImage, setCurrentImage] = useState(
       "url('/images/jellyfish-downscaled.png')"
     );
+    const [loading, setLoading] = useState(true);
 
-    const fetchImage = (src) => {
+    const fetchImage = (src: string) => {
       console.log("src", src)
       const loadingImage = new Image();
       const formattedSrc = src.replace("url('", "").replace("')", "")
@@ -24,9 +31,8 @@ const BackgroundImageWrapper = ({children}: Props) => {
         // setCurrentImage(typedBackgroundImagesJson[backgroundImageId]);
         setCurrentImage(src);
         // setCurrentImage(loadingImage.src);
-        // setLoading(false);
+        setLoading(false);
       };
-
     };
 
     useEffect(() => {
@@ -35,11 +41,17 @@ const BackgroundImageWrapper = ({children}: Props) => {
 
     return (
       <div
-        className={`h-[calc(100%-theme(spacing.10))] w-full flex flex-col bg-no-repeat bg-cover bg-center relative`}
-        style={{
-          // backgroundImage: typedBackgroundImagesJson[backgroundImageId],
-          backgroundImage: currentImage,
-        }}
+        data-loading={loading}
+        className={`h-[calc(100%-theme(spacing.10))] w-full flex flex-col bg-no-repeat bg-cover bg-center relative wallpaper`}
+        style={
+          {
+            // backgroundImage: typedBackgroundImagesJson[backgroundImageId],
+            "--highRes": typedBackgroundImagesJson[backgroundImageId],
+            "--lowRes": "url('/images/jellyfish-downscaled.png')",
+            // backgroundImage: currentImage,
+            // filter: loading ? "blur(20px)" : "none"
+          } as CSSProperties
+        }
       >
         {children}
       </div>
