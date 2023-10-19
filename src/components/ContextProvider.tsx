@@ -192,11 +192,29 @@ export const ContextProvider = ({children}: Props) => {
     const changeVolume = (volume: number) => {
         setCurrentVolume(volume);
     }
+    
+    const focusWindow = (windowIndex: number) => {
+      const currentZIndex = windows[windowIndex].zIndex;
+      const windowsCopy = windows.map((window, index) => {
+        //Puts the z-index of the focused window to the top
+        if (windowIndex === index) {
+          return { ...window, zIndex: windows.length * 2 };
+        } else if (currentZIndex > window.zIndex) {
+          return window;
+        }
+        //Make sure the z-indexes of rest of windows is below the focused window
+        else {
+          return { ...window, zIndex: window.zIndex - 2 };
+        }
+      });
+      setWindows(windowsCopy);
+    };
 
     const openWindow = (id: string) => {
       const openableWindow = openableWindows.find((window) => window.id === id);
       const windowIndex = windows.map((window) => window.name).indexOf(id);
       const dockIconRef = openableWindow?.taskBarIconRef.current;
+      console.log("index", windowIndex)
       setIsShowApplicationsOpen(false);
       if (
         windowIndex === -1 &&
@@ -219,24 +237,10 @@ export const ContextProvider = ({children}: Props) => {
         newWindow[windowIndex].isMinimized = false;
         setWindows(newWindow);
       }
+      if (windowIndex !== -1) {
+        focusWindow(windowIndex);
+      }
     };
-
-    const focusWindow = (windowIndex: number) => {
-      const currentZIndex = windows[windowIndex].zIndex;
-      const windowsCopy = windows.map((window, index) => {
-        //Puts the z-index of the focused window to the top
-        if (windowIndex === index) {
-          return { ...window, zIndex: windows.length * 2 };
-        } else if (currentZIndex > window.zIndex) {
-          return window;
-        }
-        //Make sure the z-indexes of rest of windows is below the focused window
-        else {
-          return { ...window, zIndex: window.zIndex - 2 };
-        }
-      });
-      setWindows(windowsCopy);
-    }
 
     const closeWindow = (windowIndex: number) => {
       const windowsCopy = [ ...windows ];
