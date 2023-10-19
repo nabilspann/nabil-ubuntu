@@ -20,6 +20,7 @@ body {
     rgb(var(--background-start-rgb));
   overscroll-behavior: none;
   overflow: hidden;
+  user-select: none;
 }
 
 .volume-slider {

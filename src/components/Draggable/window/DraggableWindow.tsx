@@ -404,7 +404,7 @@ const DraggableWindow = ({
     >
       <div
         ref={draggableWindowRef}
-        className="absolute"
+        className="absolute select-text"
         style={{
           width: windowSettings.size.width,
           height: windowSettings.size.height,
@@ -435,10 +435,15 @@ const DraggableWindow = ({
         )}
         <div
           className={`flex flex-col h-full w-full  border-black border-2 ${
-            windowSettings.fullScreen.isFullScreen || isMobile ? "" : "rounded-xl"
+            windowSettings.fullScreen.isFullScreen || isMobile
+              ? ""
+              : "rounded-xl"
           } overflow-hidden`}
         >
-          <div className="bg-ubuntu-dark-2 h-14 flex flex-row w-full">
+          <div
+            className="bg-ubuntu-dark-2 h-14 flex flex-row w-full"
+            style={{ minHeight: "56px" }}
+          >
             <div className="w-full" {...listeners} {...attributes}>
               {topBarChildren}
             </div>
@@ -456,22 +461,24 @@ const DraggableWindow = ({
                 >
                   <WindowMinimize size={20} />
                 </li>
-                {!isMobile && <li
-                  className={iconListClass}
-                  onClick={() => {
-                    setWindowSettings((currentSettings) => ({
-                      ...currentSettings,
-                      isTransitioning: true,
-                      type: FULL_SCREEN,
-                    }));
-                  }}
-                >
-                  {windowSettings.fullScreen.isFullScreen ? (
-                    <WindowMaximize size={20} color="#fff" />
-                  ) : (
-                    <WindowRestore size={20} color="#fff" />
-                  )}
-                </li>}
+                {!isMobile && (
+                  <li
+                    className={iconListClass}
+                    onClick={() => {
+                      setWindowSettings((currentSettings) => ({
+                        ...currentSettings,
+                        isTransitioning: true,
+                        type: FULL_SCREEN,
+                      }));
+                    }}
+                  >
+                    {windowSettings.fullScreen.isFullScreen ? (
+                      <WindowMaximize size={20} color="#fff" />
+                    ) : (
+                      <WindowRestore size={20} color="#fff" />
+                    )}
+                  </li>
+                )}
                 <li
                   className={iconListClass}
                   onClick={() => {
@@ -487,7 +494,12 @@ const DraggableWindow = ({
               </ul>
             </div>
           </div>
-          <div className="h-full w-full cursor-auto" style={{pointerEvents: isDragging ? "none" : "auto"}}>{children}</div>
+          <div
+            className="h-full w-full cursor-auto overflow-hidden"
+            style={{ pointerEvents: isDragging ? "none" : "auto" }}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </TransitionComp>

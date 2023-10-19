@@ -8,6 +8,7 @@ import SettingsWindow from "./Draggable/window/SettingsWindow";
 import Evince from "./svgs/Evince";
 import { SETTINGS } from "@/utils";
 import AboutNabil from "./Draggable/window/AboutNabil";
+import VSCode from "./svgs/VSCode";
 
 const OpenableWindowsList = () => {
     return [
@@ -73,6 +74,30 @@ const OpenableWindowsList = () => {
               src={"/images/folder-documents.png"}
               alt="Folder Document Icon"
             />
+          </>
+        ),
+      },
+      {
+        id: "Visual Studio Code",
+        topBarComp: (
+          <div className="flex items-center top-bar-window w-fit h-full">
+            Visual Studio Code
+          </div>
+        ),
+        wrappedBody: (
+          <>
+            <iframe
+              src="https://github1s.com/nabilspann/nabil-ubuntu"
+              title="Nabil Ubuntu's Code"
+              height={"100%"}
+              width={"100%"}
+            ></iframe>
+          </>
+        ),
+        taskBarIconRef: useRef<HTMLDivElement>(null),
+        icon: (size = 50) => (
+          <>
+            <VSCode size={size}/>
           </>
         ),
       },
