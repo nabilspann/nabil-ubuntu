@@ -442,7 +442,7 @@ const DraggableWindow = ({
             <div className="w-full" {...listeners} {...attributes}>
               {topBarChildren}
             </div>
-            <div className="w-1/4">
+            <div className="w-40">
               <ul className="flex flex-row w-fit float-right items-center h-full">
                 <li
                   className={iconListClass}

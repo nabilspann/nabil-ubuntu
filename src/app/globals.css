@@ -42,6 +42,11 @@ body {
   @apply bg-white h-5 w-5;
 }
 
+.top-bar-window{
+  margin-left: 50%;
+  /* margin-right: auto; */
+}
+
 .shut-down-spinner{
   animation-name: spin;
   animation-duration: 2500ms;

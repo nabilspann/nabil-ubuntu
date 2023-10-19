@@ -32,7 +32,7 @@ const CalendarTime = () => {
       <div
         className={`hover:bg-zinc-700 ${
           isOpened ? "bg-zinc-700" : ""
-        } w-fit mx-auto rounded-3xl px-2`}
+        } w-fit mx-auto rounded-3xl px-2 min-w-max`}
         onClick={() => changeMenu(calendarMenu)}
       >
         <DisplayTime

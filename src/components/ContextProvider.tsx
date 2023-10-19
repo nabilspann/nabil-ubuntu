@@ -50,8 +50,13 @@ interface ContextType {
   setIsShowApplicationsOpen: (isOpen: boolean) => void;
   backgroundImageId: string;
   changeBackgroundImage: (imageId: string) => void;
-  sessionChangeType: string | null;
-  changeSession: (sessionType: string | null) => void;
+  sessionChangeType:
+    | "lock-screen"
+    | "shut-down"
+    | "restart-session"
+    | "reset-ubuntu"
+    | null;
+  changeSession: (sessionType: ContextType["sessionChangeType"] | null) => void;
   shortCutRef: RefObject<HTMLDivElement>;
   shortCutIconsList: Icon[];
   updateShortCutIcon: (icons: Icon[]) => void;
@@ -125,7 +130,17 @@ export const ContextProvider = ({children}: Props) => {
     const openableWindows = OpenableWindowsList();
 
     const initializeIcons = (resetIconsBackToOriginal = false) => {
-      if (!resetIconsBackToOriginal && storedShortCutIcons) {
+      let useLocallyStoredIcons = true;
+      const clickableIcons = storedShortCutIcons?.filter(icon => !icon.id.toString().includes("disabled"));
+      useLocallyStoredIcons = clickableIcons?.length === openableWindows.length;
+      openableWindows?.forEach((icon) => {
+        const matchIcon = storedShortCutIcons?.find(localStorageIcon => localStorageIcon.id === icon.id);
+        if(!matchIcon){
+          useLocallyStoredIcons = false;
+        }
+      });
+
+      if (!resetIconsBackToOriginal && storedShortCutIcons && useLocallyStoredIcons ) {
         return [...storedShortCutIcons];
       } else if (shortCutRef.current?.getBoundingClientRect()) {
         const numberOfShortcutsHorizontally = Math.floor(
@@ -242,7 +257,7 @@ export const ContextProvider = ({children}: Props) => {
       }
     }
 
-    const changeSession = (sessionType: string | null) => {
+    const changeSession = (sessionType: ContextType["sessionChangeType"] | null) => {
       setSessionChangeType(sessionType);
     }
 

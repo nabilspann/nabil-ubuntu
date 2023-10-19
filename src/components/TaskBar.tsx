@@ -15,11 +15,7 @@ const TaskBar = () => {
       >
         <div className="flex flex-col items-center justify-center">
           {openableWindows.map((openableWindow) => {
-            let isWindowMinimized = false;
             const getWindow = windows.find(window => window.name === openableWindow.id);
-            if(getWindow && getWindow.isMinimized){
-              isWindowMinimized = true;
-            }
             return (
               <TaskIconWrapper
                 key={openableWindow.id}
@@ -27,7 +23,7 @@ const TaskBar = () => {
                 handleClick={() => openWindow(openableWindow.id)}
               >
                 <div className="flex items-center absolute left-0">
-                  {isWindowMinimized && <div className="w-2 h-2 bg-blue-600 rounded-full" />}
+                  {!!getWindow && <div className="w-2 h-2 bg-blue-600 rounded-full" />}
                 </div>
                 {openableWindow.icon()}
               </TaskIconWrapper>

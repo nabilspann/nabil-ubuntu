@@ -58,7 +58,7 @@ const SessionChange = () => {
         classNames={settings.type}
         unmountOnExit
       >
-        <div className="w-screen h-screen z-50 absolute" ref={ref}>
+        <div className="w-screen h-screen z-50 absolute" ref={ref} onContextMenu={(e) => e.preventDefault()}>
           {settings.sessionComp}
         </div>
       </TransitionComp>
