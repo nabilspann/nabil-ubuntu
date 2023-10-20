@@ -43,6 +43,5 @@ export const LOCK_SCREEN = "lock-screen";
 export const SHUT_DOWN = "shut-down";
 export const RESTART = "restart-session";
 export const RESET = "reset-ubuntu";
-export const INITIALIZE = "initialize";
 
 export const SETTINGS = "Settings";

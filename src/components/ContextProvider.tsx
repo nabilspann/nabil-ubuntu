@@ -3,7 +3,6 @@ import { createContext, useState, ReactNode, RefObject, useRef, useEffect } from
 import { getCookie, setCookie } from "cookies-next";
 import { UniqueIdentifier } from '@dnd-kit/core';
 import OpenableWindowsList from './WindowList';
-import { INITIALIZE } from '@/utils';
 
 interface Props {
   children: ReactNode;
@@ -57,7 +56,6 @@ interface ContextType {
     | "shut-down"
     | "restart-session"
     | "reset-ubuntu"
-    | "initialize"
     | null;
   changeSession: (sessionType: ContextType["sessionChangeType"] | null) => void;
   shortCutRef: RefObject<HTMLDivElement>;
@@ -102,8 +100,6 @@ const defaultState = {
   shortcutIcons: [],
   isShowApplicationsOpen: false,
   setIsShowApplicationsOpen: (isOpen: boolean) => {},
-  // backgroundImageId,
-  // backgroundImageId: "jellyfish",
   backgroundImageId: getCookie("ubuntu-backgroundId") || "jellyfish",
   changeBackgroundImage: () => {},
   sessionChangeType: null,
@@ -196,25 +192,6 @@ export const ContextProvider = ({children}: Props) => {
 
   const [shortCutIconsList, setShortCutIconsList] = useState<Icon[]>([]);
 
-  // useEffect(() => {
-  //     console.log(
-  //       "inside if",
-  //       window.localStorage.getItem("ubuntu-backgroundId") || "jellyfish"
-  //     );
-  //     const backgroundId =
-  //       localStorage.getItem("ubuntu-backgroundId") || "jellyfish";
-  //     setBackgroundImageId(backgroundId);
-  // }, []);
-
-  // useEffect(() => {
-  //     // console.log(
-  //     //   "inside if",
-  //     //   window.localStorage.getItem("ubuntu-backgroundId") || "jellyfish"
-  //     // );
-  //     const backgroundId = getCookie("ubuntu-backgroundId") || "jellyfish";
-  //     setBackgroundImageId(backgroundId);
-  // }, []);
-
   const changeMenu = (setting: ChangeMenu) => {
     let openedMenu = setting;
     if (setting === topBarDropDown.openedMenu) {
@@ -287,9 +264,6 @@ export const ContextProvider = ({children}: Props) => {
   const changeBackgroundImage = (imageId: string) => {
     setBackgroundImageId(imageId);
     setCookie("ubuntu-backgroundId", imageId);
-    // if (typeof window !== "undefined") {
-    //   window.localStorage.setItem("ubuntu-backgroundId", imageId);
-    // }
   };
 
   const changeSession = (
