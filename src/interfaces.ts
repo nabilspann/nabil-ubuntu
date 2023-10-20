@@ -1,4 +1,6 @@
 import backgroundImages from "../BackgroundImages.json";
+import backgroundImagesDownscaled from "../BackgroundImagesDownscaled.json";
+
 
 export interface SVGProps {
   size: number;
@@ -35,3 +37,6 @@ export interface WindowSettings {
 };
 
 export const typedBackgroundImagesJson: { [key: string]: any } = backgroundImages;
+export const typedBackgroundImagesDownscaledJson: { [key: string]: any } =
+  backgroundImagesDownscaled;
+

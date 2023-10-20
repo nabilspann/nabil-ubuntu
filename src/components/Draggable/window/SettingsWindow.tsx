@@ -17,7 +17,7 @@ const SettingsWindow = () => {
   return (
     <div className="flex flex-col bg-ubuntu-dark-5 h-full w-full overflow-y-auto">
       <div
-        className={`w-4/12 h-1/4 min-h-[150px] min-w-background-image min-h-backgorund-image bg-${backgroundImageId} bg-no-repeat bg-cover bg-center relative mx-auto`}
+        className={`w-4/12 h-1/4 min-h-[150px] min-w-background-image min-h-backgorund-image bg-no-repeat bg-cover bg-center relative mx-auto`}
         style={{
           backgroundImage: typedBackgroundImagesJson[backgroundImageId],
         }}
