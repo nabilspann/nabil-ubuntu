@@ -38,11 +38,11 @@ const SettingsMenu = () => {
         }}
       >
         <span className="mx-1.5">
-          <NetworkWired color="#FFF" size={20} />
+          <NetworkWired color="#fff" size={20} />
         </span>
         <span className="mx-1.5">{AudioIcon}</span>
         <span className="mx-1.5">
-          <Power size={20} />
+          <Power size={20} color="#fff"/>
         </span>
       </div>
       {isOpened && (

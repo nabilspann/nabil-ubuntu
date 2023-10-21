@@ -498,7 +498,7 @@ const DraggableWindow = ({
                     }));
                   }}
                 >
-                  <WindowMinimize size={20} />
+                  <WindowMinimize size={20} color="#fff"/>
                 </li>
                 {!isMobile && (
                   <li
@@ -528,7 +528,7 @@ const DraggableWindow = ({
                     }));
                   }}
                 >
-                  <WindowClose size={20} />
+                  <WindowClose size={20} color="#fff"/>
                 </li>
               </ul>
             </div>

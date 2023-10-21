@@ -49,7 +49,7 @@ const AboutNabil = () => {
             target="_blank"
             href="mailto:nabilspann@gmail.com"
           >
-            <Mail size={24} />
+            <Mail size={24} color="#fff"/>
           </a>
           <a
             target="_blank"
