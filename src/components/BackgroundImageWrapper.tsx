@@ -40,7 +40,6 @@ const BackgroundImageWrapper = ({children}: Props) => {
           "--highRes": typedBackgroundImagesJson[backgroundImageId],
           "--lowRes": typedBackgroundImagesDownscaledJson[backgroundImageId],
         } as CSSProperties
-        // memoStyle
       }
     >
       {children}

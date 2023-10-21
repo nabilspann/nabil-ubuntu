@@ -23,6 +23,7 @@ export interface WindowSettings {
   position: Position;
   size: Size;
   fullScreen: {
+    isDragging: boolean;
     isFullScreen: boolean;
     unMaximizedSize: Size;
     unMaximizedPosition: Position;

@@ -45,7 +45,6 @@ body {
 
 .top-bar-window{
   margin-left: 50%;
-  /* margin-right: auto; */
 }
 
 .shut-down-spinner{
@@ -63,12 +62,6 @@ body {
         transform:rotate(360deg);
     }
 }
-
-/* .wallpaper[data-loading=true]:after {
-  content: '';
-  filter: blur(20px);
-  background-image: url('/images/jellyfish-downscaled.png');
-} */
 
 .wallpaper {
   background-image: var(--highRes);

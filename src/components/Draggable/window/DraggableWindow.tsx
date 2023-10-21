@@ -202,6 +202,7 @@ const DraggableWindow = ({
       height: 0,
     },
     fullScreen: {
+      isDragging: false,
       isFullScreen: false,
       unMaximizedSize: {
         width: innerWidth * 0.4,
@@ -235,16 +236,45 @@ const DraggableWindow = ({
     : null;
 
   const transformStyles = {
-    transform: CSS.Transform.toString(transform),
+    transform:
+      !windowSettings.fullScreen.isFullScreen && !windowSettings.fullScreen.isDragging
+        ? CSS.Transform.toString(transform)
+        : undefined,
   };
 
   useDndMonitor({
+    onDragStart({ active: { id } }) {
+      if (windowId === id && windowSettings.fullScreen.isFullScreen) {
+        setWindowSettings((currentSettings) => ({
+          ...currentSettings,
+          isTransitioning: true,
+          type: FULL_SCREEN,
+          fullScreen: {
+            ...currentSettings.fullScreen,
+            isDragging: true,
+          },
+        }));
+      }
+    },
     onDragEnd({ delta, active: { id } }) {
-      if (windowId === id) {
+      if (windowId === id && windowSettings.position.y + delta.y < 0.1) {
+        setWindowSettings((currentSettings) => ({
+          ...currentSettings,
+          isTransitioning: true,
+          type: FULL_SCREEN,
+        }));
+      }
+      else if (
+        windowId === id &&
+        !windowSettings.fullScreen.isFullScreen &&
+        !windowSettings.fullScreen.isDragging
+      ) {
+        console.log("windowId", windowId);
         setWindowSettings((currentSettings) => {
           const {
             position: { x, y },
           } = currentSettings;
+          
           return {
             ...currentSettings,
             position: {
@@ -253,6 +283,15 @@ const DraggableWindow = ({
             },
           };
         });
+      }
+      else if(windowSettings.fullScreen.isDragging){
+        setWindowSettings((currentSettings) => ({
+          ...currentSettings,
+          fullScreen: {
+            ...currentSettings.fullScreen,
+            isDragging: false,
+          },
+        }));
       }
     },
   });
@@ -345,7 +384,7 @@ const DraggableWindow = ({
                 height: draggableScreenRect.innerHeight + 40,
               },
              fullScreen: {
-               isTransitioning: true,
+                ...currentSettings.fullScreen,
                isFullScreen: true,
                unMaximizedSize: { ...currentSettings.size },
                unMaximizedPosition: { ...currentSettings.position },
