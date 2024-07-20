@@ -1,7 +1,13 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { ReactNode } from 'react'
+import { ReactNode } from 'react';
+import "../../webvm/xterm";
+import "../../webvm/xterm-addon-fit";
+// import "../../webvm/xterm-addon-web-links";
+// import "../../webvm/serviceWorker";
+// import "../../webvm/network";
+
 
 const inter = Inter({ subsets: ['latin'] })
 
