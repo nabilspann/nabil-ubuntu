@@ -22,8 +22,11 @@ async function handleFetch(request) {
 	 * This causes the request to bounce back to the serviceworker from Cheerpos, with the event.request.url now set to the resolved URL, which allows the respondWith method to properly set the response URL in our new response.
 	 * https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent/respondWith.
 	*/
-	if (r.redirected === true)
+	if (r.redirected === true){
 		newHeaders.set("location", r.url);
+		// return;
+	}
+		
 	// In case of a redirection, we set the status to 301, and body to null, in order to not transfer too much data needlessly
 	const moddedResponse = new Response(r.redirected === true ? null : r.body, {
 		headers: newHeaders,
@@ -34,6 +37,7 @@ async function handleFetch(request) {
 }
 
 function serviceWorkerInit() {
+	console.log("test serviceWorkerInit", self);
 	// Init the service worker.
 	self.addEventListener("install", () => self.skipWaiting());
 	self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
@@ -50,6 +54,8 @@ function serviceWorkerInit() {
 async function doRegister() {
 	try {
 		const registration = await navigator.serviceWorker.register(window.document.currentScript.src);
+		
+		console.log("window.document.currentScript.src", window?.document?.currentScript);
 		console.log("Service Worker registered", registration.scope);
 		// EventListener to make sure that the page gets reloaded when a new serviceworker gets installed.
 		// f.e on first access.
@@ -66,7 +72,7 @@ async function doRegister() {
 		if (registration.active && !navigator.serviceWorker.controller) {
 			console.log("Reloading the page to transfer control to the Service Worker.");
 			try {
-				window.location.reload();
+				// window.location.reload();
 			} catch (err) {
 				console.log("Service Worker failed reloading the page. ERROR:" + err);
 			};
@@ -78,6 +84,7 @@ async function doRegister() {
 }
 
 async function serviceWorkerRegister() {
+	console.log("window.crossOriginIsolated", window.crossOriginIsolated);
 	if (window.crossOriginIsolated) return;
 	if (!window.isSecureContext) {
 		console.log("Service Worker not registered, a secure context is required.");
@@ -90,7 +97,9 @@ async function serviceWorkerRegister() {
 		console.log("Service worker is not supported in this browser");
 }
 
-if (typeof window === 'undefined') // If the script is running in a Service Worker context
-	serviceWorkerInit()
-else // If the script is running in the browser context
+if (typeof window === 'undefined') {// If the script is running in a Service Worker context
+	console.log("if"); serviceWorkerInit();
+}else{ // If the script is running in the browser context
+	console.log("elsea")
 	serviceWorkerRegister();
+}

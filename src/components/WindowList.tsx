@@ -9,6 +9,7 @@ import Evince from "./svgs/Evince";
 import { SETTINGS } from "@/utils";
 import AboutNabil from "./Draggable/window/AboutNabil";
 import VSCode from "./svgs/VSCode";
+import Terminal from "./Draggable/window/Terminal";
 
 const OpenableWindowsList = () => {
     return [
@@ -97,7 +98,7 @@ const OpenableWindowsList = () => {
         taskBarIconRef: useRef<HTMLDivElement>(null),
         icon: (size = 50) => (
           <>
-            <VSCode size={size}/>
+            <VSCode size={size} />
           </>
         ),
       },
@@ -117,6 +118,30 @@ const OpenableWindowsList = () => {
         icon: (size = 60) => (
           <>
             <SettingsGear size={size} />
+          </>
+        ),
+      },
+      {
+        id: "Terminal",
+        topBarComp: (
+          <div className="flex items-center top-bar-window w-fit h-full">
+            Terminal
+          </div>
+        ),
+        wrappedBody: (
+          <>
+            <Terminal />
+          </>
+        ),
+        taskBarIconRef: useRef<HTMLDivElement>(null),
+        icon: (size = 50) => (
+          <>
+            <Image
+              width={size}
+              height={size}
+              src={"/images/terminal-app.png"}
+              alt="Terminal Icon"
+            />
           </>
         ),
       },

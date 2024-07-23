@@ -51,8 +51,14 @@ const ChromeWindow = () => {
           </span>
         </div>
       </div>
-      <iframe
+      {/* <iframe
         src="https://www.google.com/webhp?igu=1"
+        className="bg-ubuntu-dark-4 h-full w-full"
+        key={refreshKey}
+        title="Google"
+      ></iframe> */}
+      <iframe
+        src="http://localhost:3000/Google"
         className="bg-ubuntu-dark-4 h-full w-full"
         key={refreshKey}
         title="Google"

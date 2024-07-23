@@ -3,7 +3,7 @@ function setupNetworkInterface()
     let params = new URLSearchParams("?"+window.location.hash.substr(1));
     let authKey = params.get("authKey") || undefined;
     let controlUrl = params.get("controlUrl") || undefined;
-    console.log(authKey, controlUrl);
+    console.log("authKey, controlUrl", authKey, controlUrl);
     let loginElemUrl = controlUrl ? null : "https://login.tailscale.com/admin/machines";
 
     let resolveLogin = null;
@@ -50,9 +50,9 @@ function setupNetworkInterface()
 	};
 	loginElem.addEventListener("contextmenu", rmb_to_copy);
     };
-    loginElem.style.cursor = "pointer";
-    loginElem.title = "Connect to Tailscale";
-    statusElem.style.color = "white";
+    // loginElem.style.cursor = "pointer";
+    // loginElem.title = "Connect to Tailscale";
+    // statusElem.style.color = "white";
     return {
         loginUrlCb,
         stateUpdateCb,
